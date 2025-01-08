@@ -10,26 +10,20 @@ import SnapKit
 
 class HomeView: UIView {
     
-    let appTitleLabel: UILabel = {
+    private let appTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "SwiftRun"
         label.font = .systemFont(ofSize: 24, weight: .bold)
         label.textColor = .black
         return label
     }()
-    let settingsButton: UIButton = {
+    private let settingsButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "gear"), for: .normal)
         return button
     }()
-    let profile: UIView = {
-        let view = UIView()
-        view.backgroundColor = .lightGray
-        view.layer.cornerRadius = 10
-        view.layer.masksToBounds = true
-        return view
-    }()
-    let wordBookListLabel: UILabel = {
+    private let profile = ProfileView()
+    private let wordBookListLabel: UILabel = {
         let label = UILabel()
         label.text = "단어장 목록"
         label.font = .systemFont(ofSize: 25, weight: .bold)
@@ -37,7 +31,7 @@ class HomeView: UIView {
         label.textAlignment = .center
         return label
     }()
-    let wordBookCollectionView: UICollectionView = {
+    private let wordBookCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: 150, height: 150)
         layout.minimumLineSpacing = 10
@@ -59,8 +53,7 @@ class HomeView: UIView {
 // MARK: - Setup
 extension HomeView {
     private func setup() {
-        [
-            appTitleLabel, settingsButton,
+        [   appTitleLabel, settingsButton,
             profile,
             wordBookListLabel,
             wordBookCollectionView
@@ -68,14 +61,14 @@ extension HomeView {
         
         appTitleLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(20)
-            make.top.equalToSuperview().offset(20)
+            make.top.equalTo(self.safeAreaLayoutGuide.snp.top)
             make.height.equalTo(50)
             make.width.equalTo(150)
         }
         
         settingsButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-20)
-            make.top.equalToSuperview().offset(20)
+            make.trailing.equalToSuperview()
+            make.top.equalTo(self.safeAreaLayoutGuide.snp.top)
             make.size.equalTo(50)
         }
         
@@ -83,7 +76,7 @@ extension HomeView {
             make.leading.equalToSuperview().offset(20)
             make.trailing.equalToSuperview().offset(-20)
             make.top.equalTo(appTitleLabel.snp.bottom).offset(30)
-            make.height.equalTo(150)
+            make.height.equalTo(100)
         }
         
         wordBookListLabel.snp.makeConstraints { make in
@@ -101,6 +94,6 @@ extension HomeView {
 }
 
 @available(iOS 17.0, *)
-#Preview {
-    HomeView()
+#Preview("HomeViewController") {
+    HomeViewController()
 }
