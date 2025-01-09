@@ -9,12 +9,43 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
     let startButton = UIButton()
     private let viewModel = WordListViewModel()
     private let disposeBag = DisposeBag()
+    private let sidebarButton = UIBarButtonItem(image: UIImage(systemName: "sidebar.right"), style: .plain, target: nil, action: nil)
+
+    private lazy var sidebarView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemGray6
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.5
+        view.layer.shadowOffset = CGSize(width: -2, height: 0)
+        view.layer.shadowRadius = 4
+        return view
+    }()
+    
+    private lazy var sidebarTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "단어집 목록"
+        label.textColor = .black
+        label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.textAlignment = .center
+        return label
+    }()
+    
+    private lazy var sidebarTableView: UITableView = {
+        let tableView = UITableView()
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "SidebarCell")
+        tableView.backgroundColor = .clear
+        tableView.separatorStyle = .none
+        return tableView
+    }()
+
+    private var isSidebarVisible = false
+    private let wordCategories = ["기본 단어집", "고급 단어집", "테스트 단어집"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         bindViewModel()
-        viewModel.fetchVocabulary() // 네트워크 데이터 가져오기
+        viewModel.fetchVocabulary()
     }
 
     private func setupUI() {
@@ -22,6 +53,7 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
 
         // 네비게이션 바 설정
         navigationItem.title = "Voca"
+        navigationItem.rightBarButtonItem = sidebarButton // 버튼 추가
 
         // TableView 설정
         tableView.dataSource = self
@@ -35,6 +67,29 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
         startButton.setTitleColor(.white, for: .normal)
         startButton.layer.cornerRadius = 8
         view.addSubview(startButton)
+
+        // 사이드바 설정
+        view.addSubview(sidebarView)
+        sidebarView.addSubview(sidebarTitleLabel) // wp
+        sidebarView.addSubview(sidebarTableView) // 사이드바에 TableView 추가
+
+        sidebarView.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview()
+            make.width.equalTo(300) // 사이드바 너비
+            make.trailing.equalTo(view.snp.trailing).offset(300) // 기본 숨김 상태
+        }
+        
+        // 사이드바 제목에 여백을 추가하여 다이나믹 아일랜드에 가리지 않게 함
+        sidebarTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(8) // 다이나믹 아일랜드로부터 여백 추가
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(40)
+        }
+        
+        sidebarTableView.snp.makeConstraints { make in
+            make.top.equalTo(sidebarTitleLabel.snp.bottom).offset(8)
+            make.leading.trailing.bottom.equalToSuperview().inset(16)
+        }
 
         // SnapKit 오토레이아웃
         tableView.snp.makeConstraints { make in
@@ -66,6 +121,46 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
                 self?.tableView.reloadRows(at: [indexPath], with: .automatic)
             })
             .disposed(by: disposeBag)
+
+        // Rx로 네비게이션 버튼 동작 처리
+        sidebarButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.toggleSidebar()
+            })
+            .disposed(by: disposeBag)
+
+        // 사이드바 TableView 데이터 설정
+        Observable.just(wordCategories)
+            .bind(to: sidebarTableView.rx.items(cellIdentifier: "SidebarCell", cellType: UITableViewCell.self)) { index, wordCategory, cell in
+                cell.textLabel?.text = wordCategory
+                cell.textLabel?.textColor = .black
+                cell.textLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+            }
+            .disposed(by: disposeBag)
+
+        // 사이드바 TableView 셀 선택 이벤트 처리
+        sidebarTableView.rx.itemSelected
+            .subscribe(onNext: { [weak self] indexPath in
+                print("Selected word category: \(self?.wordCategories[indexPath.row] ?? "")")
+                self?.toggleSidebar()
+            })
+            .disposed(by: disposeBag)
+    }
+
+    private func toggleSidebar() {
+        isSidebarVisible.toggle()
+
+        // 네비게이션 바 제목 숨기기/복원
+        navigationItem.title = isSidebarVisible ? nil : "Voca"
+
+        // 사이드바 위치 애니메이션
+        sidebarView.snp.updateConstraints { make in
+            make.trailing.equalTo(view.snp.trailing).offset(isSidebarVisible ? 0 : 300)
+        }
+
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
     }
 
     // UITableViewDataSource 구현
@@ -90,10 +185,9 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
         }
         return cell
     }
-
-    // UITableViewDelegate 구현 (추가적인 동작을 필요로 한다면 여기에 작성 가능)
 }
-@available(iOS 17.0, *)
-#Preview {
-    UINavigationController(rootViewController: WordListViewController())
-}
+//
+//@available(iOS 17.0, *)
+//#Preview {
+//    UINavigationController(rootViewController: WordListViewController())
+//}
