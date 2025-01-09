@@ -46,12 +46,60 @@ extension HomeViewController {
             .disposed(by: disposeBag)
         
         homeView.wordBookCollectionView.rx.itemSelected
+            .withLatestFrom(viewModel.mockItems) { indexPath, items in
+                items[indexPath.row]
+            }
             .bind(to: viewModel.itemSelected)
             .disposed(by: disposeBag)
+        
+        viewModel.itemSelected
+            .subscribe(onNext: { [weak self] selectedItem in
+                guard let self = self else { return }
+                self.navigateToDetailScreen(with: selectedItem)
+            })
+            .disposed(by: disposeBag)
     }
+    private func navigateToDetailScreen(with item: String) {
+            let mockViewController = MockViewController(item: item) // 이동할 뷰컨트롤러 생성
+            self.navigationController?.pushViewController(mockViewController, animated: true)
+        }
+
 }
 
 @available(iOS 17.0, *)
 #Preview("HomeViewController") {
     HomeViewController()
+}
+
+// 화면 이동 테스트를 위한 임시 클래스
+class MockViewController: UIViewController {
+    private let item: String
+    
+    init(item: String) {
+        self.item = item
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+        setupUI()
+    }
+    
+    private func setupUI() {
+        let label = UILabel()
+        label.text = "Selected Item: \(item)"
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(label)
+        
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
 }
