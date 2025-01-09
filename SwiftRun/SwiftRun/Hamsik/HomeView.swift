@@ -31,13 +31,12 @@ class HomeView: UIView {
         label.textAlignment = .center
         return label
     }()
-    private let wordBookCollectionView: UICollectionView = {
+    private(set) var wordBookCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: 150, height: 150)
-        layout.minimumLineSpacing = 10
+        layout.itemSize = CGSize(width: 170, height: 100)
+        layout.minimumLineSpacing = 25
         layout.minimumInteritemSpacing = 10
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .blue
         return collectionView
     }()
     
@@ -90,7 +89,10 @@ extension HomeView {
             make.trailing.equalToSuperview().offset(-20)
             make.bottom.equalToSuperview().offset(-20)
         }
+        
+        wordBookCollectionView.register(WordBookCollectionCell.self, forCellWithReuseIdentifier: WordBookCollectionCell.identifier)
     }
+    
 }
 
 @available(iOS 17.0, *)
