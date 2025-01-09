@@ -1,41 +1,47 @@
-//
-//  WordListViewModel.swift
-//  SwiftRun
-//
-//  Created by 김석준 on 1/8/25.
-//
-
 import Foundation
+import RxSwift
+import RxRelay
 
 class WordListViewModel {
-    // 단어 데이터
-    private(set) var vocabularyList: [Vocabulary] = [
-        Vocabulary(id: 1, name: "print", subname: nil, definition: "콘솔에 출력", details: ["출력 함수"], didMemorize: true, tag: "수학 함수" ),
-        Vocabulary(id: 2, name: "uppercased", subname: nil, definition: "문자열 전체를 대문자로 전환", details: ["문자열 함수"],didMemorize: false, tag: "수학 함수" ),
-        Vocabulary(id: 3, name: "lowercased", subname: nil, definition: "문자열을 소문자로 변환", details: ["문자열 함수"], didMemorize: false, tag: "수학 함수" ),
-        Vocabulary(id: 4, name: "lowercased", subname: nil, definition: "문자열을 소문자로 변환", details: ["문자열 함수"], didMemorize: false, tag: "수학 함수" ),
-        Vocabulary(id: 5, name: "lowercased", subname: nil, definition: "문자열을 소문자로 변환", details: ["문자열 함수"], didMemorize: false, tag: "수학 함수" ),
-        Vocabulary(id: 6, name: "lowercased", subname: nil, definition: "문자열을 소문자로 변환", details: ["문자열 함수"], didMemorize: false, tag: "수학 함수" ),
-        Vocabulary(id: 7, name: "lowercased", subname: nil, definition: "문자열을 소문자로 변환", details: ["문자열 함수"], didMemorize: false, tag: "수학 함수" ),
-        Vocabulary(id: 8, name: "lowercased", subname: nil, definition: "문자열을 소문자로 변환", details: ["문자열 함수"], didMemorize: false, tag: "수학 함수" ),
-        Vocabulary(id: 9, name: "lowercased", subname: nil, definition: "문자열을 소문자로 변환", details: ["문자열 함수"], didMemorize: false, tag: "수학 함수" )
-        // 데이터 추가 가능
-    ]
+    private let networkManager = NetworkManager.shared
+    private let disposeBag = DisposeBag()
+    
+    // BehaviorRelay로 단어 데이터 관리
+    private let vocabularyRelay = BehaviorRelay<[Vocabulary]>(value: [])
+    
+    var vocabularies: Observable<[Vocabulary]> {
+        return vocabularyRelay.asObservable()
+    }
 
-    // Memorize 상태를 토글하는 함수
+    // Vocabulary 데이터 가져오기
+    func fetchVocabulary() {
+        guard let url = URL(string: "https://iosvocabulary-default-rtdb.firebaseio.com/items/category1.json") else { return }
+        
+        networkManager.fetch(url: url)
+            .subscribe(onSuccess: { [weak self] (response: [String: Vocabulary]) in
+                // 딕셔너리의 값을 배열로 변환
+                let vocabularyList = Array(response.values)
+                self?.vocabularyRelay.accept(vocabularyList)
+            }, onFailure: { error in
+                print("Error fetching vocabulary: \(error)")
+            })
+            .disposed(by: disposeBag)
+    }
+
     func toggleMemorizeState(at index: Int) {
-        guard index < vocabularyList.count else { return }
-        vocabularyList[index].didMemorize.toggle()
+        var updatedList = vocabularyRelay.value
+        guard index < updatedList.count else { return }
+        updatedList[index].didMemorize.toggle()
+        vocabularyRelay.accept(updatedList)
     }
 
-    // 특정 단어를 가져오는 함수
     func vocabulary(at index: Int) -> Vocabulary? {
-        guard index < vocabularyList.count else { return nil }
-        return vocabularyList[index]
+        let currentList = vocabularyRelay.value
+        guard index < currentList.count else { return nil }
+        return currentList[index]
     }
 
-    // 단어 개수를 반환하는 함수
     func numberOfVocabularies() -> Int {
-        return vocabularyList.count
+        return vocabularyRelay.value.count
     }
 }

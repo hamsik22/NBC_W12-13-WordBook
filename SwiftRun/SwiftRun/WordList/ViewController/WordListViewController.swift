@@ -1,17 +1,20 @@
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 class WordListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     let tableView = UITableView()
     let startButton = UIButton()
-
-    // ViewModel 인스턴스
     private let viewModel = WordListViewModel()
+    private let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        bindViewModel()
+        viewModel.fetchVocabulary() // 네트워크 데이터 가져오기
     }
 
     private func setupUI() {
@@ -47,7 +50,25 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
         }
     }
 
-    // TableView DataSource
+    private func bindViewModel() {
+        // ViewModel의 vocabularies Observable이 업데이트될 때 TableView를 리로드
+        viewModel.vocabularies
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] _ in
+                self?.tableView.reloadData()
+            })
+            .disposed(by: disposeBag)
+
+        // TableView 셀 선택 이벤트 처리
+        tableView.rx.itemSelected
+            .subscribe(onNext: { [weak self] indexPath in
+                self?.viewModel.toggleMemorizeState(at: indexPath.row)
+                self?.tableView.reloadRows(at: [indexPath], with: .automatic)
+            })
+            .disposed(by: disposeBag)
+    }
+
+    // UITableViewDataSource 구현
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.numberOfVocabularies()
     }
@@ -56,32 +77,22 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "VocabularyCell", for: indexPath) as? VocabularyCell else {
             return UITableViewCell()
         }
-        
         if let vocab = viewModel.vocabulary(at: indexPath.row) {
             cell.nameLabel.text = vocab.name
             cell.definitionLabel.text = vocab.definition
             cell.memorizeTag.setTitle(vocab.didMemorize ? "외웠어요" : "외우지 않았어요", for: .normal)
             cell.memorizeTag.backgroundColor = vocab.didMemorize ? .systemGreen : .systemGray
-            cell.backgroundColor = .white
-            cell.tagLabel.text = vocab.tag
-        }
 
-        cell.onMemorizeToggle = { [weak self] in
-            guard let self = self else { return }
-            self.viewModel.toggleMemorizeState(at: indexPath.row)
-            self.tableView.reloadRows(at: [indexPath], with: .automatic)
+            cell.onMemorizeToggle = { [weak self] in
+                self?.viewModel.toggleMemorizeState(at: indexPath.row)
+                self?.tableView.reloadRows(at: [indexPath], with: .automatic)
+            }
         }
-
         return cell
     }
 
-    // Memorize 상태 변경
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel.toggleMemorizeState(at: indexPath.row)
-        tableView.reloadRows(at: [indexPath], with: .automatic)
-    }
+    // UITableViewDelegate 구현 (추가적인 동작을 필요로 한다면 여기에 작성 가능)
 }
-
 @available(iOS 17.0, *)
 #Preview {
     UINavigationController(rootViewController: WordListViewController())
