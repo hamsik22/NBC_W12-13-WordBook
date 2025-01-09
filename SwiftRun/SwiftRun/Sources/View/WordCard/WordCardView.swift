@@ -16,15 +16,7 @@ final class WordCardView: UIView {
     
     // MARK: - UI Components
     
-    private let memorizedButton: MemorizedButton = {
-        let button = MemorizedButton()
-        
-        button.backgroundColor = .srBlue600Primary
-        button.titleLabel?.text = "외웠어요"
-        button.titleLabel?.font = .systemFont(ofSize: 14, weight: .thin)
-        
-        return button
-    }()
+    private let memorizedButton: MemorizedButton = .init()
     
     private let nameLabel: UILabel = {
         let label = UILabel()
@@ -105,7 +97,7 @@ final class WordCardView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // 지금은 더미 뷰모델의 첫번째를 갖고오지만 나중엔 수정해야함.
+    // TO-DO: 지금은 DummyViewModel과 연결됨, 추후 수정 필요
     func bind(to viewModel: DummyViewModel) {
         viewModel.currentCardSubject.observe(on: MainScheduler.instance)
             .subscribe(
@@ -139,11 +131,6 @@ final class WordCardView: UIView {
             make.horizontalEdges.equalToSuperview().inset(16)
             make.height.equalToSuperview().dividedBy(3)
             make.centerY.equalToSuperview()
-        }
-        
-        memorizedButton.snp.makeConstraints { make in
-            make.height.equalTo(20)
-            make.width.equalTo(100)
         }
         
         nextButton.snp.makeConstraints { make in
