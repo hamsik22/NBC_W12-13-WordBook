@@ -7,6 +7,7 @@
 
 import Foundation
 
+// 중복 사용되는 값들
 enum Url {
     static let allCategory = "https://iosvocabulary-default-rtdb.firebaseio.com/categories.json"
     static func getCategory(category: CategoryKeys) -> String {

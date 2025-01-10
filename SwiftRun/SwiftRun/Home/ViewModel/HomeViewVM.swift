@@ -25,6 +25,7 @@ class HomeViewVM {
             .disposed(by: disposeBag)
     }
     
+    // 카테고리 불러오기
     func fetchAllCategories() {
         guard let url = URL(string: Url.allCategory) else {
             print("Invalid URL")
