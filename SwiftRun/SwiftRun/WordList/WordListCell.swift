@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-class VocabularyCell: UITableViewCell {
+class VocabularyTableViewCell: UITableViewCell { // 클래스 이름 변경
     let containerView = UIView()
     let nameLabel = UILabel()
     let definitionLabel = UILabel()
