@@ -31,6 +31,7 @@ class HomeViewController: UIViewController {
 extension HomeViewController {
     private func setup() {
         view.addSubview(homeView)
+        viewModel.fetchAllCategories()
         NSLayoutConstraint.activate([
             homeView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             homeView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -39,14 +40,14 @@ extension HomeViewController {
         ])
     }
     private func bindCollectionView() {
-        viewModel.mockItems
+        viewModel.categoriesRelay
             .bind(to: homeView.wordBookCollectionView.rx.items(cellIdentifier: WordBookCollectionCell.identifier, cellType: WordBookCollectionCell.self)) { index, item, cell in
                 cell.configure(with: item)
             }
             .disposed(by: disposeBag)
         
         homeView.wordBookCollectionView.rx.itemSelected
-            .withLatestFrom(viewModel.mockItems) { indexPath, items in
+            .withLatestFrom(viewModel.categoriesRelay) { indexPath, items in
                 items[indexPath.row]
             }
             .bind(to: viewModel.itemSelected)
@@ -59,8 +60,8 @@ extension HomeViewController {
             })
             .disposed(by: disposeBag)
     }
-    private func navigateToDetailScreen(with item: String) {
-            let mockViewController = MockViewController(item: item) // 이동할 뷰컨트롤러 생성
+    private func navigateToDetailScreen(with item: Category) {
+        let mockViewController = MockViewController(item: item.name) // 이동할 뷰컨트롤러 생성
             self.navigationController?.pushViewController(mockViewController, animated: true)
         }
 
