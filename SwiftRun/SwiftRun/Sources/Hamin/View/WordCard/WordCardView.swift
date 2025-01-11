@@ -89,7 +89,7 @@ final class WordCardView: UIView {
         addSubview(stackView)
         addSubview(nextButton)
         
-        backgroundColor = .sr100White
+        layer.cornerRadius = 16
         setConstraints()
     }
     
@@ -114,6 +114,7 @@ final class WordCardView: UIView {
                 onNext:
                     { [weak self] bool in
                         self?.memorizedButton.updateButton(bool)
+                        self?.updateBackground(bool)
                     }
             ).disposed(by: disposeBag)
         
@@ -126,6 +127,7 @@ final class WordCardView: UIView {
             .disposed(by: disposeBag)
     }
     
+    // MARK: - UI functions
     private func setConstraints() {
         stackView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview().inset(16)
@@ -138,5 +140,11 @@ final class WordCardView: UIView {
             make.height.equalTo(40)
             make.bottom.equalToSuperview().inset(16)
         }
+    }
+    
+    private func updateBackground(_ didMemorize: Bool) {
+        backgroundColor = didMemorize ? .srBlue200 : .sr200Gray
+        layer.borderColor = didMemorize ? UIColor.srBlue700.cgColor : UIColor.sr700Gray.cgColor
+        layer.borderWidth = 3.0
     }
 }
