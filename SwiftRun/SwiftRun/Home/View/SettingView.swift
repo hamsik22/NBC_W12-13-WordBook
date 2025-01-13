@@ -13,19 +13,18 @@ class SettingView: UIView {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "moon.circle")
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = .black
+        imageView.tintColor = .systemBackground
         return imageView
     }()
     private let appearanceLabel: UILabel = {
         let label = UILabel()
         label.text = "라이트/다크 모드"
         label.font = .systemFont(ofSize: 16, weight: .semibold)
-        label.textColor = .black
         label.snp.makeConstraints { make in make.height.equalTo(50)}
         return label
     }()
     
-    private let appearanceToggle: UISwitch = {
+    let themeToggle: UISwitch = {
         let toggle = UISwitch()
         toggle.isOn = true
         return toggle
@@ -41,7 +40,6 @@ class SettingView: UIView {
         let button = UIButton()
         button.setTitle("개인정보 관리정책", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
-        button.setTitleColor(.black, for: .normal)
         button.snp.makeConstraints { make in make.height.equalTo(50)}
         return button
     }()
@@ -56,7 +54,6 @@ class SettingView: UIView {
         let button = UIButton()
         button.setTitle("도움이 필요하신가요?", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
-        button.setTitleColor(.black, for: .normal)
         button.snp.makeConstraints { make in make.height.equalTo(50)}
         return button
     }()
@@ -81,7 +78,8 @@ class SettingView: UIView {
 }
 
 extension SettingView {
-    func setup() {
+    private func setup() {
+        setTintColor()
         // 라이트/다크모드의 스택뷰
         let appearanceStack = UIStackView()
         appearanceStack.axis = .horizontal
@@ -94,7 +92,7 @@ extension SettingView {
         appearanceLabelwithIcon.spacing = 5
         [appearanceIcon, appearanceLabel].forEach{ appearanceLabelwithIcon.addArrangedSubview($0)}
         // 라이트/다크모드의 스택뷰에 서브뷰 추가
-        [appearanceLabelwithIcon, appearanceToggle].forEach { appearanceStack.addArrangedSubview($0) }
+        [appearanceLabelwithIcon, themeToggle].forEach { appearanceStack.addArrangedSubview($0) }
         
         // 개인정보 스택뷰
         let privacyStack = UIStackView()
@@ -147,6 +145,16 @@ extension SettingView {
             }
             return separator
         }
+    }
+    private func setTintColor() {
+        let color = UIColor { traitCollection in
+            return traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black
+        }
+        [appearanceIcon, privacyIcon, helpIcon]
+            .forEach{ $0.tintColor = color }
+        [privacyButton, helpButton]
+            .forEach{ $0.setTitleColor(color, for: .normal)}
+        
     }
 }
 

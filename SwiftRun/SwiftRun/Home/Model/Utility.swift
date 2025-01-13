@@ -22,3 +22,7 @@ enum CategoryKeys: String {
     case developmentEnglish = "cat4"
     case marketingTerms = "cat5"
 }
+
+enum UserDefaultsKeys: String {
+    case appTheme = "appTheme"
+}
