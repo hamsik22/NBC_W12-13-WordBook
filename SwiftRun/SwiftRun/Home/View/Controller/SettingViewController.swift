@@ -44,6 +44,7 @@ class SettingViewController: UIViewController {
             .subscribe(onNext: { [weak self] isDarkMode in
                 guard let self = self else { return }
                 let style: UIUserInterfaceStyle = isDarkMode ? .dark : .light
+                // 화면 변화 애니메이션
                 UIView.animate(withDuration: 0.5) {
                     if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
                         for window in windowScene.windows {

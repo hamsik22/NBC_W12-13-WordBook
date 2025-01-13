@@ -23,12 +23,12 @@ class SettingView: UIView {
         label.snp.makeConstraints { make in make.height.equalTo(50)}
         return label
     }()
-    
     let themeToggle: UISwitch = {
         let toggle = UISwitch()
         toggle.isOn = true
         return toggle
     }()
+    
     private let privacyIcon: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "lock.circle")
@@ -43,6 +43,7 @@ class SettingView: UIView {
         button.snp.makeConstraints { make in make.height.equalTo(50)}
         return button
     }()
+    
     private let helpIcon: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "info.circle")
