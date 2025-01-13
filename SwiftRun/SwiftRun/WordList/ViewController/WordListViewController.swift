@@ -1,3 +1,4 @@
+// WordListViewController.swift
 import UIKit
 import SnapKit
 import RxSwift
@@ -7,71 +8,47 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
 
     let tableView = UITableView()
     let startButton = UIButton()
-    private let searchBar = UISearchBar()
-    private let filterButton = UIButton()
     private let viewModel = WordListViewModel()
     private let disposeBag = DisposeBag()
-    private let noResultsLabel = UILabel() // 검색 결과 없을 때 표시용
+    private let sidebarButton = UIBarButtonItem(image: UIImage(systemName: "sidebar.right"), style: .plain, target: nil, action: nil)
+    private let searchBar = UISearchBar()
+    private var filteredVocabularies: [Vocabulary] = []
+    private var isSidebarVisible = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         bindViewModel()
-        viewModel.fetchVocabulary() // 네트워크 데이터 가져오기
+        viewModel.fetchVocabulary()
     }
 
     private func setupUI() {
         view.backgroundColor = .white
 
-        // 네비게이션 바 설정
         navigationItem.title = "Voca"
+        navigationItem.rightBarButtonItem = sidebarButton
 
-        // Search Bar 설정
-        searchBar.placeholder = "Search words"
         view.addSubview(searchBar)
-
-        // TableView 설정
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(VocabularyCell.self, forCellReuseIdentifier: "VocabularyCell")
         view.addSubview(tableView)
 
-        // 필터 버튼 설정
-        filterButton.setTitle("Show All", for: .normal)
-        filterButton.setTitleColor(.systemBlue, for: .normal)
-        filterButton.layer.cornerRadius = 8
-        filterButton.layer.borderWidth = 1
-        filterButton.layer.borderColor = UIColor.systemBlue.cgColor
-        view.addSubview(filterButton)
-
-        // 시작 버튼 설정
         startButton.setTitle("시작할까요?", for: .normal)
         startButton.backgroundColor = .systemBlue
         startButton.setTitleColor(.white, for: .normal)
         startButton.layer.cornerRadius = 8
         view.addSubview(startButton)
 
-        // No Results Label 설정
-        noResultsLabel.text = "No results found"
-        noResultsLabel.textAlignment = .center
-        noResultsLabel.isHidden = true
-        view.addSubview(noResultsLabel)
-
-        // SnapKit 오토레이아웃
         searchBar.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide)
-            make.leading.trailing.equalToSuperview()
-        }
-
-        filterButton.snp.makeConstraints { make in
-            make.top.equalTo(searchBar.snp.bottom).offset(8)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.leading.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(40)
+            make.height.equalTo(50)
         }
 
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(filterButton.snp.bottom).offset(8)
-            make.leading.trailing.equalToSuperview()
+            make.top.equalTo(searchBar.snp.bottom)
+            make.leading.trailing.equalToSuperview().inset(16)
             make.bottom.equalTo(startButton.snp.top).offset(-8)
         }
 
@@ -81,70 +58,117 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
             make.height.equalTo(50)
         }
 
-        noResultsLabel.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-        }
+        // 사이드바 초기화
+        setupSidebar()
     }
 
     private func bindViewModel() {
-        // 검색어와 ViewModel 바인딩
-        searchBar.rx.text.orEmpty
-            .bind(to: viewModel.searchQuery)
-            .disposed(by: disposeBag)
-
-        // 필터 버튼과 ViewModel 바인딩
-        filterButton.rx.tap
-            .withLatestFrom(viewModel.showMemorizedOnly)
-            .map { !$0 }
-            .bind(to: viewModel.showMemorizedOnly)
-            .disposed(by: disposeBag)
-
-        // 필터 버튼 제목 업데이트
-        viewModel.showMemorizedOnly
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] showMemorizedOnly in
-                self?.filterButton.setTitle(showMemorizedOnly ? "Show All" : "Show Memorized", for: .normal)
-            })
-            .disposed(by: disposeBag)
-
-        // TableView 데이터 바인딩
-        viewModel.filteredVocabularies
+        viewModel.vocabularies
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] vocabularies in
-                self?.noResultsLabel.isHidden = !vocabularies.isEmpty
+                self?.filteredVocabularies = vocabularies
                 self?.tableView.reloadData()
             })
             .disposed(by: disposeBag)
 
-        // TableView 셀 선택 이벤트 처리
         tableView.rx.itemSelected
             .subscribe(onNext: { [weak self] indexPath in
                 self?.viewModel.toggleMemorizeState(at: indexPath.row)
                 self?.tableView.reloadRows(at: [indexPath], with: .automatic)
             })
             .disposed(by: disposeBag)
+
+        sidebarButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.toggleSidebar()
+            })
+            .disposed(by: disposeBag)
+
+        searchBar.rx.text.orEmpty
+            .distinctUntilChanged()
+            .subscribe(onNext: { [weak self] query in
+                self?.filterVocabulary(with: query)
+            })
+            .disposed(by: disposeBag)
     }
 
-    // UITableViewDataSource 구현
+    private func filterVocabulary(with query: String) {
+        if query.isEmpty {
+            viewModel.vocabularies
+                .observe(on: MainScheduler.instance)
+                .subscribe(onNext: { [weak self] vocabularies in
+                    self?.filteredVocabularies = vocabularies
+                    self?.tableView.reloadData()
+                })
+                .disposed(by: disposeBag)
+        } else {
+            viewModel.vocabularies
+                .map { vocabularies in
+                    vocabularies.filter {
+                        $0.name.lowercased().contains(query.lowercased()) ||
+                        $0.definition.lowercased().contains(query.lowercased())
+                    }
+                }
+                .observe(on: MainScheduler.instance)
+                .subscribe(onNext: { [weak self] filteredVocabularies in
+                    self?.filteredVocabularies = filteredVocabularies
+                    self?.tableView.reloadData()
+                })
+                .disposed(by: disposeBag)
+        }
+    }
+    
+    private func setupSidebar() {
+        let sidebarVC = SidebarViewController()
+        addChild(sidebarVC)
+        view.addSubview(sidebarVC.view)
+        sidebarVC.didMove(toParent: self)
+
+        sidebarVC.view.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview()
+            make.width.equalTo(300)
+            make.trailing.equalToSuperview().offset(300) // 초기 위치: 화면 밖
+        }
+
+        sidebarVC.onItemSelected = { [weak self] selectedItem in
+            self?.isSidebarVisible = false
+            self?.toggleSidebar()
+            print("Selected item: \(selectedItem)") // 선택한 항목 처리
+        }
+    }
+
+    private func toggleSidebar() {
+        isSidebarVisible.toggle()
+        if let sidebarVC = children.first(where: { $0 is SidebarViewController }) as? SidebarViewController {
+            sidebarVC.view.snp.updateConstraints { make in
+                make.trailing.equalToSuperview().offset(isSidebarVisible ? 0 : 300)
+            }
+
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.numberOfFilteredVocabularies()
+        return filteredVocabularies.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "VocabularyCell", for: indexPath) as? VocabularyCell else {
             return UITableViewCell()
         }
-        if let vocab = viewModel.filteredVocabulary(at: indexPath.row) {
-            cell.nameLabel.text = vocab.name
-            cell.definitionLabel.text = vocab.definition
-            cell.memorizeTag.setTitle(vocab.didMemorize ? "외웠어요" : "외우지 않았어요", for: .normal)
-            cell.memorizeTag.backgroundColor = vocab.didMemorize ? .systemGreen : .systemGray
+        let vocab = filteredVocabularies[indexPath.row]
+        cell.nameLabel.text = vocab.name
+        cell.definitionLabel.text = vocab.definition
+        cell.memorizeTag.setTitle(vocab.didMemorize ? "외웠어요" : "외우지 않았어요", for: .normal)
+        cell.memorizeTag.backgroundColor = vocab.didMemorize ? .systemGreen : .systemGray
 
-            cell.onMemorizeToggle = { [weak self] in
-                self?.viewModel.toggleMemorizeState(at: indexPath.row)
-                self?.tableView.reloadRows(at: [indexPath], with: .automatic)
-            }
+        cell.onMemorizeToggle = { [weak self] in
+            self?.viewModel.toggleMemorizeState(at: indexPath.row)
+            self?.tableView.reloadRows(at: [indexPath], with: .automatic)
         }
+
         return cell
     }
 }
