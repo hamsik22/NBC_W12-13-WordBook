@@ -12,6 +12,8 @@ final class WordCardStackViewController: UIViewController {
     
     let viewModel = DummyViewModel()
     let wordCardView = WordCardView()
+    let anotherViewModel = DummyViewModel()
+    let anotherWordCardView = WordCardView()
     
     private var originalPosition = CGPoint()
     
@@ -21,10 +23,15 @@ final class WordCardStackViewController: UIViewController {
         print("ViewController loaded")
         wordCardView.bind(to: viewModel)
         view.addSubview(wordCardView)
+        view.addSubview(anotherWordCardView)
+        anotherWordCardView.bind(to: anotherViewModel)
         setConstraints()
+        wordCardView.layer.zPosition = 0
+        anotherWordCardView.layer.zPosition = 1
         
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
         wordCardView.addGestureRecognizer(panGesture)
+        anotherWordCardView.addGestureRecognizer(panGesture)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -39,6 +46,9 @@ final class WordCardStackViewController: UIViewController {
             make.edges.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
         
+        anotherWordCardView.snp.makeConstraints { make in
+            make.edges.equalTo(wordCardView.snp.edges)
+        }
     }
 }
 
