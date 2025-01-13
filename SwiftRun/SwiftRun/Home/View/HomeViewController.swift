@@ -60,9 +60,9 @@ extension HomeViewController {
             .disposed(by: disposeBag)
     }
     private func navigateToDetailScreen(with item: String) {
-            let mockViewController = MockViewController(item: item) // 이동할 뷰컨트롤러 생성
-            self.navigationController?.pushViewController(mockViewController, animated: true)
-        }
+        let wordListViewController = WordListViewController() // WordListViewController로 변경
+        self.navigationController?.pushViewController(wordListViewController, animated: true)
+    }
 
 }
 
