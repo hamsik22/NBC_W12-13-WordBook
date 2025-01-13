@@ -9,6 +9,13 @@ import UIKit
 import SnapKit
 
 class SettingView: UIView {
+    private let appearanceIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "moon.circle")
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .black
+        return imageView
+    }()
     private let appearanceLabel: UILabel = {
         let label = UILabel()
         label.text = "라이트/다크 모드"
@@ -23,7 +30,13 @@ class SettingView: UIView {
         toggle.isOn = true
         return toggle
     }()
-    
+    private let privacyIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "lock.circle")
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .black
+        return imageView
+    }()
     private let privacyButton: UIButton = {
         let button = UIButton()
         button.setTitle("개인정보 관리정책", for: .normal)
@@ -32,7 +45,13 @@ class SettingView: UIView {
         button.snp.makeConstraints { make in make.height.equalTo(50)}
         return button
     }()
-    
+    private let helpIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "info.circle")
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .black
+        return imageView
+    }()
     private let helpButton: UIButton = {
         let button = UIButton()
         button.setTitle("도움이 필요하신가요?", for: .normal)
@@ -63,30 +82,49 @@ class SettingView: UIView {
 
 extension SettingView {
     func setup() {
-        // appearanceStack 설정
+        // 라이트/다크모드의 스택뷰
         let appearanceStack = UIStackView()
         appearanceStack.axis = .horizontal
         appearanceStack.alignment = .center
         appearanceStack.distribution = .equalSpacing
         appearanceStack.spacing = 10
-        [appearanceLabel, appearanceToggle].forEach { appearanceStack.addArrangedSubview($0) }
-        // appearanceStack 설정
+        // 아이콘과 레이블의 스택뷰
+        let appearanceLabelwithIcon = UIStackView()
+        appearanceLabelwithIcon.axis = .horizontal
+        appearanceLabelwithIcon.spacing = 5
+        [appearanceIcon, appearanceLabel].forEach{ appearanceLabelwithIcon.addArrangedSubview($0)}
+        // 라이트/다크모드의 스택뷰에 서브뷰 추가
+        [appearanceLabelwithIcon, appearanceToggle].forEach { appearanceStack.addArrangedSubview($0) }
+        
+        // 개인정보 스택뷰
         let privacyStack = UIStackView()
         appearanceStack.axis = .horizontal
         appearanceStack.alignment = .center
         appearanceStack.distribution = .equalSpacing
         appearanceStack.spacing = 10
-        [privacyButton, UIView()].forEach { privacyStack.addArrangedSubview($0) }
+        // 아이콘과 레이블의 스택뷰
+        let privacyLabelwithIcon = UIStackView()
+        privacyLabelwithIcon.axis = .horizontal
+        privacyLabelwithIcon.spacing = 5
+        [privacyIcon, privacyButton].forEach{ privacyLabelwithIcon.addArrangedSubview($0)}
+        // 개인정보 스택뷰에 서브뷰 추가
+        [privacyLabelwithIcon, UIView()].forEach { privacyStack.addArrangedSubview($0) }
         
-        // helpCenterStack 설정
+        // 헬프센터 스택뷰
         let helpCenterStack = UIStackView()
         appearanceStack.axis = .horizontal
         appearanceStack.alignment = .center
         appearanceStack.distribution = .equalSpacing
         appearanceStack.spacing = 10
-        [helpButton, UIView()].forEach { helpCenterStack.addArrangedSubview($0) }
+        // 아이콘과 레이블의 스택뷰
+        let helpCenterLabelwithIcon = UIStackView()
+        helpCenterLabelwithIcon.axis = .horizontal
+        helpCenterLabelwithIcon.spacing = 5
+        [helpIcon, helpButton].forEach{ helpCenterLabelwithIcon.addArrangedSubview($0)}
+        // 헬프센터 스택뷰에 서브뷰 추가
+        [helpCenterLabelwithIcon, UIView()].forEach { helpCenterStack.addArrangedSubview($0) }
         
-        // 메인 스택뷰에 추가
+        // 구분선을 포함하여 스택뷰에 서브뷰 추가
         [appearanceStack,
          createSeparator(),
          privacyStack,
@@ -96,15 +134,16 @@ extension SettingView {
         
         // stackView의 제약 조건 설정
         stackView.snp.makeConstraints { make in
-            make.top.equalTo(self.safeAreaLayoutGuide.snp.top).offset(20) // 상단에 붙이기
-            make.leading.trailing.equalToSuperview().inset(20)           // 좌우 여백 설정
+            make.top.equalTo(self.safeAreaLayoutGuide.snp.top).offset(20)
+            make.leading.trailing.equalToSuperview().inset(20)
         }
+        
         // 구분선 생성 함수
         func createSeparator() -> UIView {
             let separator = UIView()
             separator.backgroundColor = .lightGray.withAlphaComponent(0.5)
             separator.snp.makeConstraints { make in
-                make.height.equalTo(1) // 구분선 높이
+                make.height.equalTo(1)
             }
             return separator
         }
