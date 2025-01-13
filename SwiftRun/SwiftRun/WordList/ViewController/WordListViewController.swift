@@ -8,13 +8,23 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
 
     let tableView = UITableView()
     let startButton = UIButton()
-    private let viewModel = WordListViewModel()
+    var viewModel: WordListViewModel // 기본 생성자를 제거하여 강제로 초기화하도록 변경
     private let disposeBag = DisposeBag()
     private let sidebarButton = UIBarButtonItem(image: UIImage(systemName: "sidebar.right"), style: .plain, target: nil, action: nil)
     private let searchBar = UISearchBar()
     private var filteredVocabularies: [Vocabulary] = []
     private var isSidebarVisible = false
 
+    // 초기화 메서드 정의
+    init(viewModel: WordListViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
