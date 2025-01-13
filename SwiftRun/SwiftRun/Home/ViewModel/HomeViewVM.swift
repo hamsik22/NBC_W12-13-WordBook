@@ -10,13 +10,13 @@ import RxSwift
 import RxCocoa
 
 class HomeViewVM {
-    
+
     let categoriesRelay = BehaviorRelay<[Category]>(value: [])
     let itemSelected = PublishRelay<Category>()
-    
+
     private let networkManager = NetworkManager.shared
     private let disposeBag = DisposeBag()
-    
+
     init() {
         itemSelected
             .subscribe(onNext: { selectedItem in
@@ -24,16 +24,16 @@ class HomeViewVM {
             })
             .disposed(by: disposeBag)
     }
-    
+
     // 카테고리 불러오기
     func fetchAllCategories() {
         guard let url = URL(string: Url.allCategory) else {
             print("Invalid URL")
             return
         }
-        
+
         networkManager.fetch(url: url)
-            .subscribe(onSuccess: { [weak self] (categories: [String : Category]) in
+            .subscribe(onSuccess: { [weak self] (categories: [String: Category]) in
                 // 카테고리 정렬
                 let sortedCategories = categories.sorted { $0.key < $1.key }
                 let categoryList = sortedCategories.map { $0.value }

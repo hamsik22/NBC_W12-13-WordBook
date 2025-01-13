@@ -37,6 +37,7 @@ extension HomeViewController {
             homeView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
+
     // 데이터 바인딩
     private func bindCollectionView() {
         // Cell 구성
@@ -62,7 +63,9 @@ extension HomeViewController {
             })
             .disposed(by: disposeBag)
     }
-    private func navigateToDetailScreen(with item: String) {
+
+    // 화면 이동
+    private func navigateToDetailScreen(with item: Category) {
         let wordListViewController = WordListViewController() // WordListViewController로 변경
         self.navigationController?.pushViewController(wordListViewController, animated: true)
     }
