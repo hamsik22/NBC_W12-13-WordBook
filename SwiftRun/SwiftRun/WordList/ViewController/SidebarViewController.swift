@@ -5,7 +5,7 @@ class SidebarViewController: UIViewController {
     // 클로저를 정의
     var onItemSelected: ((String) -> Void)?
 
-    private var items: [String] = []
+    private var categories: [Category] = []  // Category 객체 배열로 변경
     private let tableView = UITableView()
 
     override func viewDidLoad() {
@@ -47,10 +47,10 @@ class SidebarViewController: UIViewController {
             do {
                 // JSON 데이터를 Dictionary 형태로 디코딩
                 let categoriesDict = try JSONDecoder().decode([String: Category].self, from: data)
-                let names = categoriesDict.values.map { $0.name }.sorted()
+                let categories = categoriesDict.values.sorted { $0.name < $1.name }
 
                 DispatchQueue.main.async {
-                    self?.items = names
+                    self?.categories = categories
                     self?.tableView.reloadData() // 테이블뷰 갱신
                 }
             } catch {
@@ -63,18 +63,20 @@ class SidebarViewController: UIViewController {
 
 extension SidebarViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
+        return categories.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        cell.textLabel?.text = items[indexPath.row]
+        let category = categories[indexPath.row]
+        cell.textLabel?.text = category.name
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedItem = items[indexPath.row]
-        onItemSelected?(selectedItem) // 클로저 호출
+        let selectedCategory = categories[indexPath.row]
+        // 선택된 카테고리의 id를 클로저로 전달
+        onItemSelected?(selectedCategory.id)
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }

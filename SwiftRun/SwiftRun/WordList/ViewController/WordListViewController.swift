@@ -1,4 +1,3 @@
-// WordListViewController.swift
 import UIKit
 import SnapKit
 import RxSwift
@@ -8,14 +7,13 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
 
     let tableView = UITableView()
     let startButton = UIButton()
-    var viewModel: WordListViewModel // 기본 생성자를 제거하여 강제로 초기화하도록 변경
+    var viewModel: WordListViewModel
     private let disposeBag = DisposeBag()
     private let sidebarButton = UIBarButtonItem(image: UIImage(systemName: "sidebar.right"), style: .plain, target: nil, action: nil)
     private let searchBar = UISearchBar()
     private var filteredVocabularies: [Vocabulary] = []
     private var isSidebarVisible = false
 
-    // 초기화 메서드 정의
     init(viewModel: WordListViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -143,7 +141,7 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
         sidebarVC.onItemSelected = { [weak self] selectedItem in
             self?.isSidebarVisible = false
             self?.toggleSidebar()
-            print("Selected item: \(selectedItem)") // 선택한 항목 처리
+            self?.viewModel.fetchItems(forCategory: selectedItem) // 선택된 카테고리로 데이터 갱신
         }
     }
 
