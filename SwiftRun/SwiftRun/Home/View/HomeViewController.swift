@@ -20,6 +20,7 @@ class HomeViewController: UIViewController {
         print("HomeViewController loaded")
         setup()
         bindCollectionView()
+        bindErrorHandling()
     }
 }
 
@@ -29,7 +30,7 @@ extension HomeViewController {
     private func setup() {
         view.addSubview(homeView)
         homeView.translatesAutoresizingMaskIntoConstraints = false
-        viewModel.fetchAllCategories()
+        viewModel.fetchAllCategories() // 데이터 가져오기 호출
         NSLayoutConstraint.activate([
             homeView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             homeView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -59,9 +60,27 @@ extension HomeViewController {
         viewModel.itemSelected
             .subscribe(onNext: { [weak self] selectedItem in
                 guard let self = self else { return }
+                print("Selected Category: \(selectedItem.name)") // 선택한 카테고리 이름 출력
                 self.navigateToDetailScreen(with: selectedItem)
             })
             .disposed(by: disposeBag)
+    }
+
+    // 에러 처리 바인딩
+    private func bindErrorHandling() {
+        viewModel.errorRelay
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] errorMessage in
+                self?.showErrorAlert(message: errorMessage)
+            })
+            .disposed(by: disposeBag)
+    }
+
+    // 에러 메시지를 사용자에게 알림
+    private func showErrorAlert(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 
     // 화면 이동
