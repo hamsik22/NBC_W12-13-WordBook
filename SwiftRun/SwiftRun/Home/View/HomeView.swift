@@ -17,7 +17,7 @@ class HomeView: UIView {
         label.textColor = .black
         return label
     }()
-    private let settingsButton: UIButton = {
+    let settingsButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "gear"), for: .normal)
         return button

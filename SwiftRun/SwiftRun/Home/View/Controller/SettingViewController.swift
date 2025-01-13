@@ -14,7 +14,9 @@ class SettingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(settingView)
+        view.backgroundColor = .systemBackground
         settingView.translatesAutoresizingMaskIntoConstraints = false
+        self.title = "설정"
         NSLayoutConstraint.activate([
             settingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             settingView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
