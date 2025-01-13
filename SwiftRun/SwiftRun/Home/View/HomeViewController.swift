@@ -65,7 +65,7 @@ extension HomeViewController {
     }
 
     // 화면 이동
-    private func navigateToDetailScreen(with item: String) {
+    private func navigateToDetailScreen(with item: Category) {
         let wordListViewController = WordListViewController() // WordListViewController로 변경
         self.navigationController?.pushViewController(wordListViewController, animated: true)
     }
