@@ -69,6 +69,10 @@ extension HomeViewController {
         let wordListViewController = WordListViewController() // WordListViewController로 변경
         self.navigationController?.pushViewController(wordListViewController, animated: true)
     }
+    private func navigateToSettingScreen() {
+        let settingViewController = SettingViewController()
+        self.navigationController?.pushViewController(settingViewController, animated: true)
+    }
 }
 
 @available(iOS 17.0, *)
