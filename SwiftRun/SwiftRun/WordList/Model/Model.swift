@@ -41,4 +41,3 @@ struct Vocabulary: Decodable {
         didMemorize = try container.decodeIfPresent(Bool.self, forKey: .didMemorize) ?? false
     }
 }
-
