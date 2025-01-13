@@ -36,7 +36,7 @@ class SettingView: UIView {
         imageView.tintColor = .black
         return imageView
     }()
-    private let privacyButton: UIButton = {
+     let privacyButton: UIButton = {
         let button = UIButton()
         button.setTitle("개인정보 관리정책", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
@@ -50,7 +50,7 @@ class SettingView: UIView {
         imageView.tintColor = .black
         return imageView
     }()
-    private let helpButton: UIButton = {
+     let helpButton: UIButton = {
         let button = UIButton()
         button.setTitle("도움이 필요하신가요?", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
