@@ -41,6 +41,8 @@ final class WordCardStackViewModel {
     lazy var currentCard = BehaviorRelay(value: cardsToShow.popLast() ?? wordPlaceholder)
     lazy var didMemorizeCurrentCard = BehaviorRelay(value: Bool())
     
+    lazy var isLastCard = BehaviorRelay(value: Bool())
+    
     // MARK: - Initializer
     
     init(categoryID: String, urlString: String) {
@@ -70,6 +72,10 @@ final class WordCardStackViewModel {
         updateStatus(for: nextCard)
         print(memorizedCards)
         print(nextCard)
+        
+        if index == cardsToShow.count - 1 {
+            isLastCard.accept(true)
+        }
     }
     
     func previousCard() {
@@ -81,6 +87,8 @@ final class WordCardStackViewModel {
         updateStatus(for: previousCard)
         print(memorizedCards)
         print(previousCard)
+        
+        isLastCard.accept(false)
     }
     
     func memorizedButtonTapped() {

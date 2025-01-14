@@ -131,6 +131,14 @@ final class WordCardView: UIView {
                 }
             ).disposed(by: disposeBag)
         
+        viewModel.isLastCard.observe(on: MainScheduler.instance)
+            .subscribe(
+                onNext: { [weak self] bool in
+                    self?.nextButton.setTitle(bool ? "완료" : "다음", for: .normal)
+                    self?.nextButton.backgroundColor = bool ? .swiftOrange400 : .srBlue600Primary
+                }
+            ).disposed(by: disposeBag)
+        
         memorizedButton.rx.tap
             .subscribe(onNext: { viewModel.memorizedButtonTapped() })
             .disposed(by: disposeBag)
