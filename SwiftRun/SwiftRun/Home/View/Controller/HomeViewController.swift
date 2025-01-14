@@ -36,6 +36,7 @@ extension HomeViewController {
             homeView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         setBind()
+        
     }
     
     // 데이터 바인딩
@@ -63,7 +64,6 @@ extension HomeViewController {
             })
             .disposed(by: disposeBag)
     }
-    
     private func bindSettingButton() {
         homeView.settingsButton.rx.tap
                 .bind(to: viewModel.navigateToSettingScreen)
@@ -75,6 +75,15 @@ extension HomeViewController {
             })
             .disposed(by: disposeBag)
     }
+    private func setBind() {
+        bindSettingButton()
+        bindCollectionView()
+    }
+    private func setProfile() {
+        let name = UserDefaults.standard.string(forKey: UserDefaultsKeys.userName.rawValue) ?? "학생 1"
+        let count = UserDefaults.standard.integer(forKey: UserDefaultsKeys.memorizedCount.rawValue)
+        homeView.profile.configure(name: name, count: count)
+    }
     
     // 화면 이동
     private func navigateToDetailScreen(with item: Category) {
@@ -84,11 +93,6 @@ extension HomeViewController {
     private func navigateToSettingScreen() {
         let settingViewController = SettingViewController()
         self.navigationController?.pushViewController(settingViewController, animated: true)
-    }
-    
-    private func setBind() {
-        bindSettingButton()
-        bindCollectionView()
     }
     
 }

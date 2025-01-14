@@ -21,7 +21,7 @@ class HomeView: UIView {
         button.setImage(UIImage(systemName: "gear"), for: .normal)
         return button
     }()
-    private let profile = ProfileView()
+    let profile = ProfileView()
     private let wordBookListLabel: UILabel = {
         let label = UILabel()
         label.text = "단어장 목록"

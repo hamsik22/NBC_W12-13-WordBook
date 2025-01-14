@@ -11,15 +11,17 @@ import SnapKit
 class ProfileView: UIView {
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "person.crop.circle")
+        imageView.image = UIImage(named: "profile")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
+        imageView.layer.masksToBounds = true
+        imageView.layer.cornerRadius = 50
         return imageView
     }()
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.text = "황석현"
-        label.font = .systemFont(ofSize: 16, weight: .bold)
+        label.font = .systemFont(ofSize: 24, weight: .bold)
         return label
     }()
     private let progressPercentLabel: UILabel = {
@@ -27,14 +29,16 @@ class ProfileView: UIView {
         label.text = "50%"
         label.font = .systemFont(ofSize: 12, weight: .regular)
         label.textAlignment = .center
-        label.textColor = .lightGray
-        label.backgroundColor = .blue
+        label.textColor = .white
+        label.backgroundColor = UIColor(named: "SRBlue500")
+        label.layer.cornerRadius = 10
+        label.layer.masksToBounds = true
         return label
     }()
     private let countLabel: UILabel = {
         let label = UILabel()
-        label.text = "1/333" // 추후엔 \(currentCount) / \(totalCount) 식으로 개발
-        label.font = .systemFont(ofSize: 12, weight: .regular)
+        label.text = "1 / 333" // 추후엔 \(currentCount) / \(totalCount) 식으로 개발
+        label.font = .systemFont(ofSize: 12, weight: .bold)
         label.textColor = .lightGray
         return label
     }()
@@ -97,7 +101,7 @@ extension ProfileView {
         countLabel.snp.makeConstraints { make in
             make.leading.equalTo(progressPercentLabel.snp.trailing).offset(5)
             make.top.equalTo(nameLabel.snp.bottom).offset(5)
-            make.width.equalTo(100)
+            make.width.equalTo(150)
             make.height.equalTo(20)
         }
         progressBar.snp.makeConstraints { make in
@@ -106,6 +110,12 @@ extension ProfileView {
             make.bottom.equalToSuperview().offset(-5)
             make.height.equalTo(10)
         }
+    }
+    func configure(name: String, count: Int) {
+        self.nameLabel.text = name
+        self.progressPercentLabel.text = "\((count / 333) * 100) %"
+        self.countLabel.text = "\(count) / 333"
+        self.progressBar.progress = Float(Double(count) / 333)
     }
 }
 
