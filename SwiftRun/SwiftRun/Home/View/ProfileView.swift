@@ -112,7 +112,17 @@ extension ProfileView {
             make.bottom.equalToSuperview().offset(-5)
             make.height.equalTo(15)
         }
+        setTintColor()
     }
+    private func setTintColor() {
+        let color = UIColor { traitCollection in
+            return traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black
+        }
+        self.editProfileButton.tintColor = color
+    }
+}
+// MARK: - Function
+extension ProfileView {
     func configure(name: String, count: Int) {
         self.nameLabel.text = name
         self.progressPercentLabel.text = "\((count / 333) * 100) %"
