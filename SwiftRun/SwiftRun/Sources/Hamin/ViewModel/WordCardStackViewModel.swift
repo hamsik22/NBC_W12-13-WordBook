@@ -9,8 +9,13 @@ import Foundation
 import RxSwift
 import RxRelay
 
+protocol WordCardStackVMDelegate: AnyObject {
+    func popViewController()
+}
+
 final class WordCardStackViewModel {
     
+    weak var delegate: WordCardStackVMDelegate?
     private let networkManager = NetworkManager.shared
     private let disposeBag = DisposeBag()
     
@@ -24,6 +29,7 @@ final class WordCardStackViewModel {
         }
     }
     var memorizedCards: Set<Int> = []
+
     
     private var index = 0
     var cardsLeft: Int {
@@ -41,6 +47,8 @@ final class WordCardStackViewModel {
     lazy var currentCard = BehaviorRelay(value: cardsToShow.popLast() ?? wordPlaceholder)
     lazy var didMemorizeCurrentCard = BehaviorRelay(value: Bool())
     
+    lazy var isLastCard = BehaviorRelay(value: Bool())
+    
     // MARK: - Initializer
     
     init(categoryID: String, urlString: String) {
@@ -53,6 +61,10 @@ final class WordCardStackViewModel {
     
     // MARK: - Functions for binding
     
+    func setDelegate(to target: WordCardStackVMDelegate) {
+        self.delegate = target
+    }
+    
     func start() {
         guard let card = cardsToShow.first else { return }
         currentCard.accept(card)
@@ -60,7 +72,7 @@ final class WordCardStackViewModel {
     
     func nextCard() {
         guard 0..<cardsLeft - 1 ~= index else {
-            saveMemorizedCards()
+            delegate?.popViewController()
             return
         }
         index += 1
@@ -70,6 +82,10 @@ final class WordCardStackViewModel {
         updateStatus(for: nextCard)
         print(memorizedCards)
         print(nextCard)
+        
+        if index == cardsToShow.count - 1 {
+            isLastCard.accept(true)
+        }
     }
     
     func previousCard() {
@@ -81,6 +97,8 @@ final class WordCardStackViewModel {
         updateStatus(for: previousCard)
         print(memorizedCards)
         print(previousCard)
+        
+        isLastCard.accept(false)
     }
     
     func memorizedButtonTapped() {
@@ -109,7 +127,7 @@ final class WordCardStackViewModel {
     // MARK: - Other functions
     
     func fetchWords() {
-        guard let url = URL(string: "https://iosvocabulary-default-rtdb.firebaseio.com/items/category1.json") else { return }
+        guard let url = URL(string: "https://iosvocabulary-default-rtdb.firebaseio.com/items/category\(self.categoryID).json") else { return }
         
         networkManager.fetch(url: url)
             .subscribe(onSuccess: { [weak self] (response: [String: Word]) in
