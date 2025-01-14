@@ -33,6 +33,18 @@ class VocabularyCell: UITableViewCell {
                 self.memorizeTag.backgroundColor == .systemBlue ? .systemGray : .systemBlue
         }
     }
+    
+    func configure(with word: Word, isMemorized: Bool) {
+        nameLabel.text = word.name
+        definitionLabel.text = word.definition
+
+        var configuration = UIButton.Configuration.filled()
+        configuration.title = isMemorized ? "Memorize" : "Not Memorize"
+        configuration.baseBackgroundColor = isMemorized ? .systemGreen : .systemGray
+        configuration.cornerStyle = .capsule
+
+        memorizeTag.configuration = configuration
+    }
 
     private func setupContainerView() {
         containerView.backgroundColor = .sr100White
@@ -61,7 +73,7 @@ class VocabularyCell: UITableViewCell {
 
     private func setupMemorizeTag() {
         var configuration = UIButton.Configuration.filled()
-        configuration.title = "Memorize"
+        configuration.title = "Not Memorize"
         configuration.baseBackgroundColor = .srBlue600Primary
         configuration.cornerStyle = .capsule
         

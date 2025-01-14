@@ -72,6 +72,7 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     @objc private func start() {
+        viewModel.fetchWords() // 데이터를 최신화합니다.
         let wordCardStackVC = WordCardStackViewController(with: viewModel)
         navigationController?.pushViewController(wordCardStackVC, animated: true)
     }
@@ -166,14 +167,14 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "VocabularyCell", for: indexPath) as? VocabularyCell else {
             return UITableViewCell()
         }
-        let vocab = filteredVocabularies[indexPath.row]
-        cell.nameLabel.text = vocab.name
-        cell.definitionLabel.text = vocab.definition
-//        cell.memorizeTag.setTitle(vocab.didMemorize ? "외웠어요" : "외우지 않았어요", for: .normal)
-//        cell.memorizeTag.backgroundColor = vocab.didMemorize ? .systemGreen : .systemGray
+
+        let word = filteredVocabularies[indexPath.row]
+        let isMemorized = viewModel.memorizedCards.contains(word.id)
+
+        cell.configure(with: word, isMemorized: isMemorized)
 
         cell.onMemorizeToggle = { [weak self] in
-//            self?.viewModel.toggleMemorizeState(at: indexPath.row)
+            self?.viewModel.toggleMemorization(for: word.id)
             self?.tableView.reloadRows(at: [indexPath], with: .automatic)
         }
 

@@ -23,7 +23,7 @@ final class WordCardStackViewModel {
             vocabularyRelay.accept(cardsToShow)
         }
     }
-    private var memorizedCards: Set<Int> = []
+    var memorizedCards: Set<Int> = []
     
     private var index = 0
     var cardsLeft: Int {
@@ -95,6 +95,15 @@ final class WordCardStackViewModel {
         } else {
             memorizedCards = memorizedCards.filter { $0 != currentCard.value.id }
         }
+    }
+    
+    func toggleMemorization(for wordID: Int) {
+        if memorizedCards.contains(wordID) {
+            memorizedCards.remove(wordID)
+        } else {
+            memorizedCards.insert(wordID)
+        }
+        saveMemorizedCards()
     }
     
     // MARK: - Other functions
