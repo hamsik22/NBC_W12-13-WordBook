@@ -116,8 +116,18 @@ extension HomeViewController {
     }
     private func setProfile() {
         let name = UserDefaults.standard.string(forKey: UserDefaultsKeys.userName.rawValue) ?? "학생 1"
-        let count = UserDefaults.standard.array(forKey: "1")?.count ?? 0
+        let count = getMemorizedCount()
         homeView.profile.configure(name: name, count: count)
+        print("setProfile")
+        print("name: \(name), count: \(count)")
+        
+        func getMemorizedCount() -> Int {
+            var sum = 0
+            for id in 1...5 {
+                sum += UserDefaults.standard.array(forKey: "\(id)")?.count ?? 0
+            }
+            return sum
+        }
     }
     
     // 화면 이동
