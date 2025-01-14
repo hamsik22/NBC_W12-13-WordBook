@@ -53,6 +53,18 @@ final class WordCardView: UIView {
         return label
     }()
     
+    private let previousButton: UIButton = {
+        let button = UIButton()
+        
+        button.backgroundColor = .sr400Gray
+        button.setTitle("이전", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
+        button.tintColor = .sr100White
+        button.layer.cornerRadius = 8
+        
+        return button
+    }()
+    
     private let nextButton: UIButton = {
         let button = UIButton()
         
@@ -60,6 +72,7 @@ final class WordCardView: UIView {
         button.setTitle("다음", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 20, weight: .bold)
         button.tintColor = .sr100White
+        button.layer.cornerRadius = 8
         
         return button
     }()
@@ -88,6 +101,7 @@ final class WordCardView: UIView {
         super.init(frame: frame)
         addSubview(stackView)
         addSubview(nextButton)
+        addSubview(previousButton)
         
         layer.cornerRadius = 16
         setConstraints()
@@ -105,7 +119,7 @@ final class WordCardView: UIView {
                 onNext: { [weak self] word in
                     self?.nameLabel.text = word.name
                     self?.subnameLabel.text = word.subName
-                    self?.detailsLabel.text = word.details.first
+                    self?.detailsLabel.text = word.definition
                 }
             ).disposed(by: disposeBag)
         
@@ -119,6 +133,10 @@ final class WordCardView: UIView {
         
         memorizedButton.rx.tap
             .subscribe(onNext: { viewModel.memorizedButtonTapped() })
+            .disposed(by: disposeBag)
+        
+        previousButton.rx.tap
+            .subscribe(onNext: { viewModel.previousCard() })
             .disposed(by: disposeBag)
         
         nextButton.rx.tap
@@ -135,9 +153,15 @@ final class WordCardView: UIView {
         }
         
         nextButton.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview().inset(16)
+            make.trailing.bottom.equalToSuperview().inset(24)
             make.height.equalTo(40)
-            make.bottom.equalToSuperview().inset(16)
+            make.width.equalToSuperview().dividedBy(2.5)
+        }
+        
+        previousButton.snp.makeConstraints { make in
+            make.leading.bottom.equalToSuperview().inset(24)
+            make.height.equalTo(40)
+            make.width.equalToSuperview().dividedBy(2.5)
         }
     }
     

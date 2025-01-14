@@ -7,14 +7,14 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
 
     let tableView = UITableView()
     let startButton = UIButton()
-    var viewModel: WordListViewModel
+    var viewModel: WordCardStackViewModel
     private let disposeBag = DisposeBag()
     private let sidebarButton = UIBarButtonItem(image: UIImage(systemName: "sidebar.right"), style: .plain, target: nil, action: nil)
     private let searchBar = UISearchBar()
-    private var filteredVocabularies: [Vocabulary] = []
+    private var filteredVocabularies: [Word] = []
     private var isSidebarVisible = false
 
-    init(viewModel: WordListViewModel) {
+    init(viewModel: WordCardStackViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -27,11 +27,11 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
         super.viewDidLoad()
         setupUI()
         bindViewModel()
-        viewModel.fetchVocabulary()
+        viewModel.fetchWords()
     }
 
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
 
         navigationItem.title = "Voca"
         navigationItem.rightBarButtonItem = sidebarButton
@@ -43,8 +43,8 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
         view.addSubview(tableView)
 
         startButton.setTitle("시작할까요?", for: .normal)
-        startButton.backgroundColor = .systemBlue
-        startButton.setTitleColor(.white, for: .normal)
+        startButton.backgroundColor = .srBlue600Primary
+        startButton.setTitleColor(.sr100White, for: .normal)
         startButton.layer.cornerRadius = 8
         startButton.addTarget(self, action: #selector(start), for: .touchUpInside)
         view.addSubview(startButton)
@@ -72,7 +72,7 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     @objc private func start() {
-        let wordCardStackVC = WordCardStackViewController()
+        let wordCardStackVC = WordCardStackViewController(with: viewModel)
         navigationController?.pushViewController(wordCardStackVC, animated: true)
     }
 
@@ -85,12 +85,6 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
             })
             .disposed(by: disposeBag)
 
-        tableView.rx.itemSelected
-            .subscribe(onNext: { [weak self] indexPath in
-                self?.viewModel.toggleMemorizeState(at: indexPath.row)
-                self?.tableView.reloadRows(at: [indexPath], with: .automatic)
-            })
-            .disposed(by: disposeBag)
 
         sidebarButton.rx.tap
             .subscribe(onNext: { [weak self] in
@@ -175,11 +169,11 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
         let vocab = filteredVocabularies[indexPath.row]
         cell.nameLabel.text = vocab.name
         cell.definitionLabel.text = vocab.definition
-        cell.memorizeTag.setTitle(vocab.didMemorize ? "외웠어요" : "외우지 않았어요", for: .normal)
-        cell.memorizeTag.backgroundColor = vocab.didMemorize ? .systemGreen : .systemGray
+//        cell.memorizeTag.setTitle(vocab.didMemorize ? "외웠어요" : "외우지 않았어요", for: .normal)
+//        cell.memorizeTag.backgroundColor = vocab.didMemorize ? .systemGreen : .systemGray
 
         cell.onMemorizeToggle = { [weak self] in
-            self?.viewModel.toggleMemorizeState(at: indexPath.row)
+//            self?.viewModel.toggleMemorizeState(at: indexPath.row)
             self?.tableView.reloadRows(at: [indexPath], with: .automatic)
         }
 

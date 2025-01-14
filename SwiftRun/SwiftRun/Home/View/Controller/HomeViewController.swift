@@ -129,8 +129,8 @@ extension HomeViewController {
         print("Selected category URL: \(urlString)")  // URL 출력
             
         // WordListViewController로 화면 이동
-        let wordListViewModel = WordListViewModel(categoryId: categoryId, urlString: urlString) // ViewModel을 생성하고 URL을 전달
-        let wordListViewController = WordListViewController(viewModel: wordListViewModel) // ViewModel을 넘겨줌
+        let wordCardStackViewModel = WordCardStackViewModel(categoryID: categoryId, urlString: urlString) // ViewModel을 생성하고 URL을 전달
+        let wordListViewController = WordListViewController(viewModel: wordCardStackViewModel) // ViewModel을 넘겨줌
         self.navigationController?.pushViewController(wordListViewController, animated: true)
     }
 

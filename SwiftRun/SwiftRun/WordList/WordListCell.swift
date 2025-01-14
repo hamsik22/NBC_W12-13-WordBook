@@ -35,7 +35,7 @@ class VocabularyCell: UITableViewCell {
     }
 
     private func setupContainerView() {
-        containerView.backgroundColor = UIColor(red: 231/255, green: 231/255, blue: 231/255, alpha: 1.0)
+        containerView.backgroundColor = .sr100White
         containerView.layer.cornerRadius = 12
         containerView.layer.shadowColor = UIColor.black.cgColor
         containerView.layer.shadowOpacity = 0.1
@@ -46,14 +46,14 @@ class VocabularyCell: UITableViewCell {
 
     private func setupNameLabel() {
         nameLabel.font = UIFont.boldSystemFont(ofSize: 18)
-        nameLabel.textColor = .black
+        nameLabel.textColor = .sr900Black
         nameLabel.accessibilityIdentifier = "VocabularyCell.NameLabel"
         containerView.addSubview(nameLabel)
     }
 
     private func setupDefinitionLabel() {
         definitionLabel.font = UIFont.systemFont(ofSize: 14)
-        definitionLabel.textColor = .darkGray
+        definitionLabel.textColor = .sr700Gray
         definitionLabel.numberOfLines = 0
         definitionLabel.accessibilityIdentifier = "VocabularyCell.DefinitionLabel"
         containerView.addSubview(definitionLabel)
@@ -62,7 +62,7 @@ class VocabularyCell: UITableViewCell {
     private func setupMemorizeTag() {
         var configuration = UIButton.Configuration.filled()
         configuration.title = "Memorize"
-        configuration.baseBackgroundColor = .systemBlue
+        configuration.baseBackgroundColor = .srBlue600Primary
         configuration.cornerStyle = .capsule
         
         memorizeTag.configuration = configuration
@@ -75,7 +75,7 @@ class VocabularyCell: UITableViewCell {
 
     private func setupTagLabel() {
         tagLabel.font = UIFont.systemFont(ofSize: 12)
-        tagLabel.textColor = .black
+        tagLabel.textColor = .sr900Black
         tagLabel.textAlignment = .center
         tagLabel.clipsToBounds = true
         tagLabel.accessibilityIdentifier = "VocabularyCell.TagLabel"
