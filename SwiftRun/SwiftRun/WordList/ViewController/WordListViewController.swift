@@ -1,4 +1,3 @@
-// WordListViewController.swift
 import UIKit
 import SnapKit
 import RxSwift
@@ -8,13 +7,22 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
 
     let tableView = UITableView()
     let startButton = UIButton()
-    private let viewModel = WordListViewModel()
+    var viewModel: WordListViewModel
     private let disposeBag = DisposeBag()
     private let sidebarButton = UIBarButtonItem(image: UIImage(systemName: "sidebar.right"), style: .plain, target: nil, action: nil)
     private let searchBar = UISearchBar()
     private var filteredVocabularies: [Vocabulary] = []
     private var isSidebarVisible = false
 
+    init(viewModel: WordListViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -139,7 +147,7 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
         sidebarVC.onItemSelected = { [weak self] selectedItem in
             self?.isSidebarVisible = false
             self?.toggleSidebar()
-            print("Selected item: \(selectedItem)") // 선택한 항목 처리
+            self?.viewModel.fetchItems(forCategory: selectedItem) // 선택된 카테고리로 데이터 갱신
         }
     }
 

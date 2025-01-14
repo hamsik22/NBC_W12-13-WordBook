@@ -20,6 +20,12 @@ class HomeViewController: UIViewController {
         print("HomeViewController loaded")
         setup()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print("HomeViewController will appear")
+        setProfile()
+    }
 }
 
 // MARK: - Setup
@@ -36,6 +42,8 @@ extension HomeViewController {
             homeView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         setBind()
+        setProfile()
+        bindEditButton()
     }
     
     // 데이터 바인딩
@@ -63,7 +71,6 @@ extension HomeViewController {
             })
             .disposed(by: disposeBag)
     }
-    
     private func bindSettingButton() {
         homeView.settingsButton.rx.tap
                 .bind(to: viewModel.navigateToSettingScreen)
@@ -75,20 +82,61 @@ extension HomeViewController {
             })
             .disposed(by: disposeBag)
     }
-    
-    // 화면 이동
-    private func navigateToDetailScreen(with item: Category) {
-        let wordListViewController = WordListViewController()
-        self.navigationController?.pushViewController(wordListViewController, animated: true)
+    private func bindEditButton() {
+        homeView.profile.editProfileButton.rx.tap
+            .subscribe(onNext: {
+                let alertController = UIAlertController(
+                        title: "이름 변경",
+                        message: "새 이름을 입력하세요",
+                        preferredStyle: .alert
+                    )
+                    
+                    alertController.addTextField { textField in
+                        textField.placeholder = "새 이름"
+                    }
+                    
+                    let saveAction = UIAlertAction(title: "저장", style: .default) { [weak self] _ in
+                        guard let self = self,
+                              let newName = alertController.textFields?.first?.text, !newName.isEmpty else { return }
+                        homeView.profile.nameLabel.text = newName
+                        UserDefaults.standard.set(newName, forKey: UserDefaultsKeys.userName.rawValue)
+                    }
+                    
+                    let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+                    
+                    alertController.addAction(saveAction)
+                    alertController.addAction(cancelAction)
+                self.present(alertController, animated: true)
+            })
+            .disposed(by: disposeBag)
     }
-    private func navigateToSettingScreen() {
-        let settingViewController = SettingViewController()
-        self.navigationController?.pushViewController(settingViewController, animated: true)
-    }
-    
     private func setBind() {
         bindSettingButton()
         bindCollectionView()
+    }
+    private func setProfile() {
+        let name = UserDefaults.standard.string(forKey: UserDefaultsKeys.userName.rawValue) ?? "학생 1"
+        let count = UserDefaults.standard.array(forKey: "1")?.count ?? 0
+        homeView.profile.configure(name: name, count: count)
+    }
+    
+    // 화면 이동
+    private func navigateToDetailScreen(with item: Category) {
+
+        // 선택된 카테고리 ID로 URL을 생성
+        let categoryId = item.id
+        let urlString = "https://iosvocabulary-default-rtdb.firebaseio.com/items/category\(categoryId).json"
+        print("Selected category URL: \(urlString)")  // URL 출력
+            
+        // WordListViewController로 화면 이동
+        let wordListViewModel = WordListViewModel(categoryId: categoryId, urlString: urlString) // ViewModel을 생성하고 URL을 전달
+        let wordListViewController = WordListViewController(viewModel: wordListViewModel) // ViewModel을 넘겨줌
+        self.navigationController?.pushViewController(wordListViewController, animated: true)
+    }
+
+    private func navigateToSettingScreen() {
+        let settingViewController = SettingViewController()
+        self.navigationController?.pushViewController(settingViewController, animated: true)
     }
     
 }

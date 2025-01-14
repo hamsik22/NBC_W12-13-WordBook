@@ -21,7 +21,7 @@ class HomeView: UIView {
         button.setImage(UIImage(systemName: "gear"), for: .normal)
         return button
     }()
-    private let profile = ProfileView()
+    let profile = ProfileView()
     private let wordBookListLabel: UILabel = {
         let label = UILabel()
         label.text = "단어장 목록"
@@ -64,7 +64,7 @@ extension HomeView {
         }
         
         settingsButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview()
+            make.trailing.equalToSuperview().inset(5)
             make.top.equalTo(self.safeAreaLayoutGuide.snp.top)
             make.size.equalTo(50)
         }
@@ -89,8 +89,15 @@ extension HomeView {
         }
         
         wordBookCollectionView.register(WordBookCollectionCell.self, forCellWithReuseIdentifier: WordBookCollectionCell.identifier)
+        
+        setTintColor()
     }
-    
+    private func setTintColor() {
+        let color = UIColor { traitCollection in
+            return traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black
+        }
+        self.settingsButton.tintColor = color
+    }
 }
 
 @available(iOS 17.0, *)

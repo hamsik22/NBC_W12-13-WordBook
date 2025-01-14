@@ -9,7 +9,7 @@ class VocabularyCell: UITableViewCell {
     let tagLabel = UILabel()
     
     var onMemorizeToggle: (() -> Void)?
-
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -19,8 +19,6 @@ class VocabularyCell: UITableViewCell {
         setupMemorizeTag()
         setupTagLabel()
         setupConstraints()
-        
-        memorizeTag.addTarget(self, action: #selector(handleMemorizeToggle), for: .touchUpInside)
     }
 
     required init?(coder: NSCoder) {
@@ -28,8 +26,12 @@ class VocabularyCell: UITableViewCell {
     }
     
     @objc private func handleMemorizeToggle() {
-        print("Button tapped!") // 호출 여부 확인
         onMemorizeToggle?()
+        // UIButtonConfiguration을 사용하여 애니메이션 적용
+        UIView.animate(withDuration: 0.3) {
+            self.memorizeTag.backgroundColor =
+                self.memorizeTag.backgroundColor == .systemBlue ? .systemGray : .systemBlue
+        }
     }
 
     private func setupContainerView() {
@@ -45,6 +47,7 @@ class VocabularyCell: UITableViewCell {
     private func setupNameLabel() {
         nameLabel.font = UIFont.boldSystemFont(ofSize: 18)
         nameLabel.textColor = .black
+        nameLabel.accessibilityIdentifier = "VocabularyCell.NameLabel"
         containerView.addSubview(nameLabel)
     }
 
@@ -52,21 +55,31 @@ class VocabularyCell: UITableViewCell {
         definitionLabel.font = UIFont.systemFont(ofSize: 14)
         definitionLabel.textColor = .darkGray
         definitionLabel.numberOfLines = 0
+        definitionLabel.accessibilityIdentifier = "VocabularyCell.DefinitionLabel"
         containerView.addSubview(definitionLabel)
     }
 
     private func setupMemorizeTag() {
-        memorizeTag.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-        memorizeTag.layer.cornerRadius = 8
-        memorizeTag.contentEdgeInsets = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
+        var configuration = UIButton.Configuration.filled()
+        configuration.title = "Memorize"
+        configuration.baseBackgroundColor = .systemBlue
+        configuration.cornerStyle = .capsule
+        
+        memorizeTag.configuration = configuration
+        memorizeTag.accessibilityLabel = "Memorization Toggle"
+        memorizeTag.accessibilityHint = "Double tap to toggle memorization state"
+        memorizeTag.accessibilityTraits = .button
+        memorizeTag.addTarget(self, action: #selector(handleMemorizeToggle), for: .touchUpInside)
         containerView.addSubview(memorizeTag)
     }
-    
+
     private func setupTagLabel() {
         tagLabel.font = UIFont.systemFont(ofSize: 12)
         tagLabel.textColor = .black
         tagLabel.textAlignment = .center
         tagLabel.clipsToBounds = true
+        tagLabel.accessibilityIdentifier = "VocabularyCell.TagLabel"
+        tagLabel.accessibilityTraits = .staticText
         containerView.addSubview(tagLabel)
     }
 
