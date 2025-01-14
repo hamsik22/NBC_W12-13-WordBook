@@ -28,7 +28,11 @@ final class WordCardStackViewModel {
             vocabularyRelay.accept(cardsToShow)
         }
     }
-    private var memorizedCards: Set<Int> = []
+    private var memorizedCards: Set<Int> = [] {
+        didSet {
+            saveMemorizedCards()
+        }
+    }
     
     private var index = 0
     var cardsLeft: Int {
