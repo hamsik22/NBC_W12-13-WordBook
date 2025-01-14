@@ -13,11 +13,11 @@ class VocabularyCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        configureContainerView()
-        configureNameLabel()
-        configureDefinitionLabel()
-        configureMemorizeTag()
-        configureTagLabel()
+        setupContainerView()
+        setupNameLabel()
+        setupDefinitionLabel()
+        setupMemorizeTag()
+        setupTagLabel()
         setupConstraints()
     }
 
@@ -27,13 +27,14 @@ class VocabularyCell: UITableViewCell {
     
     @objc private func handleMemorizeToggle() {
         onMemorizeToggle?()
-        // 애니메이션 추가
-        UIView.animate(withDuration: 0.3, animations: {
-            self.memorizeTag.backgroundColor = self.memorizeTag.backgroundColor == .systemBlue ? .systemGray : .systemBlue
-        })
+        // UIButtonConfiguration을 사용하여 애니메이션 적용
+        UIView.animate(withDuration: 0.3) {
+            self.memorizeTag.backgroundColor =
+                self.memorizeTag.backgroundColor == .systemBlue ? .systemGray : .systemBlue
+        }
     }
 
-    private func configureContainerView() {
+    private func setupContainerView() {
         containerView.backgroundColor = UIColor(red: 231/255, green: 231/255, blue: 231/255, alpha: 1.0)
         containerView.layer.cornerRadius = 12
         containerView.layer.shadowColor = UIColor.black.cgColor
@@ -43,14 +44,14 @@ class VocabularyCell: UITableViewCell {
         contentView.addSubview(containerView)
     }
 
-    private func configureNameLabel() {
+    private func setupNameLabel() {
         nameLabel.font = UIFont.boldSystemFont(ofSize: 18)
         nameLabel.textColor = .black
         nameLabel.accessibilityIdentifier = "VocabularyCell.NameLabel"
         containerView.addSubview(nameLabel)
     }
 
-    private func configureDefinitionLabel() {
+    private func setupDefinitionLabel() {
         definitionLabel.font = UIFont.systemFont(ofSize: 14)
         definitionLabel.textColor = .darkGray
         definitionLabel.numberOfLines = 0
@@ -58,22 +59,27 @@ class VocabularyCell: UITableViewCell {
         containerView.addSubview(definitionLabel)
     }
 
-    private func configureMemorizeTag() {
-        memorizeTag.titleLabel?.font = UIFont.systemFont(ofSize: 12)
-        memorizeTag.layer.cornerRadius = 8
-        memorizeTag.contentEdgeInsets = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
+    private func setupMemorizeTag() {
+        var configuration = UIButton.Configuration.filled()
+        configuration.title = "Memorize"
+        configuration.baseBackgroundColor = .systemBlue
+        configuration.cornerStyle = .capsule
+        
+        memorizeTag.configuration = configuration
         memorizeTag.accessibilityLabel = "Memorization Toggle"
         memorizeTag.accessibilityHint = "Double tap to toggle memorization state"
+        memorizeTag.accessibilityTraits = .button
         memorizeTag.addTarget(self, action: #selector(handleMemorizeToggle), for: .touchUpInside)
         containerView.addSubview(memorizeTag)
     }
 
-    private func configureTagLabel() {
+    private func setupTagLabel() {
         tagLabel.font = UIFont.systemFont(ofSize: 12)
         tagLabel.textColor = .black
         tagLabel.textAlignment = .center
         tagLabel.clipsToBounds = true
         tagLabel.accessibilityIdentifier = "VocabularyCell.TagLabel"
+        tagLabel.accessibilityTraits = .staticText
         containerView.addSubview(tagLabel)
     }
 
