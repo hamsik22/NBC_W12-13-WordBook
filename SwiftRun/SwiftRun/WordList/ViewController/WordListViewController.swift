@@ -85,12 +85,6 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
             })
             .disposed(by: disposeBag)
 
-//        tableView.rx.itemSelected
-//            .subscribe(onNext: { [weak self] indexPath in
-//                self?.viewModel.toggleMemorizeState(at: indexPath.row)
-//                self?.tableView.reloadRows(at: [indexPath], with: .automatic)
-//            })
-//            .disposed(by: disposeBag)
 
         sidebarButton.rx.tap
             .subscribe(onNext: { [weak self] in
