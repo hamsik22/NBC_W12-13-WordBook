@@ -25,4 +25,6 @@ enum CategoryKeys: String {
 
 enum UserDefaultsKeys: String {
     case appTheme = "appTheme"
+    case userName = "userName"
+    case memorizedCount = "memorizedCount"
 }

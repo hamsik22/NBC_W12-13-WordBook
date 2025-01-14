@@ -15,9 +15,10 @@ class WordBookCollectionCell: UICollectionViewCell {
     let wordBookTitle: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
+        label.textColor = UIColor(named: "SRBlue400")
         label.layer.borderWidth = 2
         label.layer.cornerRadius = 10
-        label.layer.borderColor = UIColor.blue.cgColor
+        label.layer.borderColor = UIColor(named: "SRBlue400")?.cgColor
         label.numberOfLines = 2
         return label
     }()
