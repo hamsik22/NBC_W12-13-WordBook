@@ -15,14 +15,25 @@ final class WordCardStackViewModel {
     private let disposeBag = DisposeBag()
     
     // MARK: - Properties
-    private let categoryID: String = "1"
+    var categoryID: String
+    var urlString: String
     
-    private var cardsToShow: [Word] = []
+    private var cardsToShow: [Word] = [] {
+        didSet {
+            vocabularyRelay.accept(cardsToShow)
+        }
+    }
     private var memorizedCards: Set<Int> = []
     
     private var index = 0
     var cardsLeft: Int {
         return cardsToShow.count
+    }
+    
+    private let vocabularyRelay = BehaviorRelay<[Word]>(value: [])
+    
+    var vocabularies: Observable<[Word]> {
+        return vocabularyRelay.asObservable()
     }
     
     private let wordPlaceholder = Word()
@@ -32,7 +43,10 @@ final class WordCardStackViewModel {
     
     // MARK: - Initializer
     
-    init() {
+    init(categoryID: String, urlString: String) {
+        self.categoryID = categoryID
+        self.urlString = urlString
+        
         fetchWords()
         loadMemorizedCards()
     }
@@ -80,9 +94,9 @@ final class WordCardStackViewModel {
         }
     }
     
-    // MARK: - Private functions
+    // MARK: - Other functions
     
-    private func fetchWords() {
+    func fetchWords() {
         guard let url = URL(string: "https://iosvocabulary-default-rtdb.firebaseio.com/items/category1.json") else { return }
         
         networkManager.fetch(url: url)
@@ -92,6 +106,32 @@ final class WordCardStackViewModel {
                 self?.cardsToShow = words
             }, onFailure: { error in
                 print("Error fetching vocabulary: \(error)")
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    func fetchItems(forCategory categoryId: String) {
+        // 카테고리별 데이터를 가져오는 URL을 설정
+        let categoryUrlString = "https://iosvocabulary-default-rtdb.firebaseio.com/items/category\(categoryId).json"
+        
+        // URL을 콘솔에 출력
+        print("Requesting URL: \(categoryUrlString)")
+        
+        guard let url = URL(string: categoryUrlString) else { return }
+        
+        networkManager.fetch(url: url)
+            .subscribe(onSuccess: { [weak self] (response: [String: Word]) in
+                let vocabularyList = Array(response.values)
+                self?.vocabularyRelay.accept(vocabularyList)
+            }, onFailure: { error in
+                print("Error fetching vocabulary for category \(categoryId): \(error)")
+                // 응답을 디버깅하기 위해 추가 로그 출력
+                if let errorResponse = error as? NSError {
+                    print("Error code: \(errorResponse.code)")
+                    if let urlResponse = errorResponse.userInfo[NSURLErrorFailingURLErrorKey] {
+                        print("Failed URL: \(urlResponse)")
+                    }
+                }
             })
             .disposed(by: disposeBag)
     }
