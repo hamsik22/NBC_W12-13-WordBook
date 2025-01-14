@@ -97,25 +97,24 @@ final class WordCardView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // TO-DO: 지금은 DummyViewModel과 연결됨, 추후 수정 필요
-    func bind(to viewModel: DummyViewModel) {
-        viewModel.currentCardSubject.observe(on: MainScheduler.instance)
+// MARK: - Function for binding with ViewModel
+    
+    func bind(to viewModel: WordCardStackViewModel) {
+        viewModel.currentCard.observe(on: MainScheduler.instance)
             .subscribe(
-                onNext:
-                    { [weak self] word in
-                        self?.nameLabel.text = word.name
-                        self?.subnameLabel.text = word.subname
-                        self?.detailsLabel.text = word.details
-                    }
+                onNext: { [weak self] word in
+                    self?.nameLabel.text = word.name
+                    self?.subnameLabel.text = word.subName
+                    self?.detailsLabel.text = word.details.first
+                }
             ).disposed(by: disposeBag)
         
-        viewModel.didMemorize.observe(on: MainScheduler.instance)
+        viewModel.didMemorizeCurrentCard.observe(on: MainScheduler.instance)
             .subscribe(
-                onNext:
-                    { [weak self] bool in
-                        self?.memorizedButton.updateButton(bool)
-                        self?.updateBackground(bool)
-                    }
+                onNext: { [weak self] bool in
+                    self?.memorizedButton.updateButton(bool)
+                    self?.updateBackground(bool)
+                }
             ).disposed(by: disposeBag)
         
         memorizedButton.rx.tap
@@ -123,7 +122,7 @@ final class WordCardView: UIView {
             .disposed(by: disposeBag)
         
         nextButton.rx.tap
-            .subscribe(onNext: { viewModel.nextButtonTapped() })
+            .subscribe(onNext: { viewModel.nextCard() })
             .disposed(by: disposeBag)
     }
     

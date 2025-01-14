@@ -10,9 +10,8 @@ import SnapKit
 
 final class WordCardStackViewController: UIViewController {
     
-    let viewModel = DummyViewModel()
+    let viewModel = WordCardStackViewModel()
     let wordCardView = WordCardView()
-    let anotherViewModel = DummyViewModel()
     let anotherWordCardView = WordCardView()
     
     private var originalPosition = CGPoint()
@@ -24,7 +23,7 @@ final class WordCardStackViewController: UIViewController {
         wordCardView.bind(to: viewModel)
         view.addSubview(wordCardView)
         view.addSubview(anotherWordCardView)
-        anotherWordCardView.bind(to: anotherViewModel)
+        anotherWordCardView.bind(to: viewModel)
         setConstraints()
         wordCardView.layer.zPosition = 0
         anotherWordCardView.layer.zPosition = 1
@@ -38,6 +37,7 @@ final class WordCardStackViewController: UIViewController {
         super.viewDidAppear(animated)
         
         originalPosition = wordCardView.center
+        print(viewModel.cardsLeft)
     }
     
     
