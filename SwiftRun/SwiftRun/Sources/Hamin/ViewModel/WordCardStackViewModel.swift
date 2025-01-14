@@ -54,12 +54,15 @@ final class WordCardStackViewModel {
     // MARK: - Functions for binding
     
     func start() {
-        guard let card = cardsToShow.popLast() else { return }
+        guard let card = cardsToShow.first else { return }
         currentCard.accept(card)
     }
     
     func nextCard() {
-        guard 0..<cardsLeft - 1 ~= index else { return }
+        guard 0..<cardsLeft - 1 ~= index else {
+            saveMemorizedCards()
+            return
+        }
         index += 1
         let nextCard = cardsToShow[index]
 
@@ -123,6 +126,7 @@ final class WordCardStackViewModel {
             .subscribe(onSuccess: { [weak self] (response: [String: Word]) in
                 let vocabularyList = Array(response.values)
                 self?.vocabularyRelay.accept(vocabularyList)
+                self?.cardsToShow = vocabularyList
             }, onFailure: { error in
                 print("Error fetching vocabulary for category \(categoryId): \(error)")
                 // 응답을 디버깅하기 위해 추가 로그 출력
