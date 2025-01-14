@@ -9,8 +9,13 @@ import Foundation
 import RxSwift
 import RxRelay
 
+protocol WordCardStackVMDelegate: AnyObject {
+    func popViewController()
+}
+
 final class WordCardStackViewModel {
     
+    weak var delegate: WordCardStackVMDelegate?
     private let networkManager = NetworkManager.shared
     private let disposeBag = DisposeBag()
     
@@ -55,6 +60,10 @@ final class WordCardStackViewModel {
     
     // MARK: - Functions for binding
     
+    func setDelegate(to target: WordCardStackVMDelegate) {
+        self.delegate = target
+    }
+    
     func start() {
         guard let card = cardsToShow.first else { return }
         currentCard.accept(card)
@@ -62,7 +71,7 @@ final class WordCardStackViewModel {
     
     func nextCard() {
         guard 0..<cardsLeft - 1 ~= index else {
-            saveMemorizedCards()
+            delegate?.popViewController()
             return
         }
         index += 1
