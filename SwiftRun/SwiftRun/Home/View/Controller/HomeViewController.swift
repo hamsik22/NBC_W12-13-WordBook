@@ -20,6 +20,12 @@ class HomeViewController: UIViewController {
         print("HomeViewController loaded")
         setup()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print("HomeViewController will appear")
+        setProfile()
+    }
 }
 
 // MARK: - Setup
@@ -36,7 +42,7 @@ extension HomeViewController {
             homeView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         setBind()
-        
+        setProfile()
     }
     
     // 데이터 바인딩
@@ -81,7 +87,7 @@ extension HomeViewController {
     }
     private func setProfile() {
         let name = UserDefaults.standard.string(forKey: UserDefaultsKeys.userName.rawValue) ?? "학생 1"
-        let count = UserDefaults.standard.integer(forKey: UserDefaultsKeys.memorizedCount.rawValue)
+        let count = UserDefaults.standard.array(forKey: "1")?.count ?? 0
         homeView.profile.configure(name: name, count: count)
     }
     
@@ -98,7 +104,6 @@ extension HomeViewController {
         let wordListViewController = WordListViewController(viewModel: wordListViewModel) // ViewModel을 넘겨줌
         self.navigationController?.pushViewController(wordListViewController, animated: true)
     }
-    
 
     private func navigateToSettingScreen() {
         let settingViewController = SettingViewController()

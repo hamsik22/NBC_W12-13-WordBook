@@ -51,9 +51,11 @@ class ProfileView: UIView {
     private let progressBar: UIProgressView = {
         let progressView = UIProgressView(progressViewStyle: .default)
         progressView.translatesAutoresizingMaskIntoConstraints = false
-        progressView.progress = 0.5 // 초기 게이지 값 (0.0 ~ 1.0)
-        progressView.trackTintColor = .lightGray // 배경색
-        progressView.progressTintColor = .systemBlue // 게이지 색상
+        progressView.progress = 0.5
+        progressView.trackTintColor = .lightGray
+        progressView.progressTintColor = .systemBlue
+        progressView.layer.cornerRadius = 5
+        progressView.layer.masksToBounds = true
         return progressView
     }()
     
@@ -96,19 +98,19 @@ extension ProfileView {
             make.leading.equalTo(profileImageView.snp.trailing).offset(10)
             make.top.equalTo(nameLabel.snp.bottom).offset(5)
             make.width.equalTo(50)
-            make.height.equalTo(20)
+            make.height.equalTo(30)
         }
         countLabel.snp.makeConstraints { make in
             make.leading.equalTo(progressPercentLabel.snp.trailing).offset(5)
             make.top.equalTo(nameLabel.snp.bottom).offset(5)
             make.width.equalTo(150)
-            make.height.equalTo(20)
+            make.height.equalTo(30)
         }
         progressBar.snp.makeConstraints { make in
             make.leading.equalTo(profileImageView.snp.trailing).offset(10)
             make.trailing.equalToSuperview()
             make.bottom.equalToSuperview().offset(-5)
-            make.height.equalTo(10)
+            make.height.equalTo(15)
         }
     }
     func configure(name: String, count: Int) {
