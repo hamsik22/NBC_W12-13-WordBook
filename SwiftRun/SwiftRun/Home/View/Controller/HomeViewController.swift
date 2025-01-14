@@ -78,6 +78,7 @@ extension HomeViewController {
     
     // 화면 이동
     private func navigateToDetailScreen(with item: Category) {
+
         // 선택된 카테고리 ID로 URL을 생성
         let categoryId = item.id
         let urlString = "https://iosvocabulary-default-rtdb.firebaseio.com/items/category\(categoryId).json"
@@ -89,6 +90,7 @@ extension HomeViewController {
         self.navigationController?.pushViewController(wordListViewController, animated: true)
     }
     
+
     private func navigateToSettingScreen() {
         let settingViewController = SettingViewController()
         self.navigationController?.pushViewController(settingViewController, animated: true)
