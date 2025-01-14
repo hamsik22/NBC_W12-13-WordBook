@@ -20,7 +20,6 @@ class ProfileView: UIView {
         let label = UILabel()
         label.text = "황석현"
         label.font = .systemFont(ofSize: 16, weight: .bold)
-        label.textColor = .black
         return label
     }()
     private let progressPercentLabel: UILabel = {

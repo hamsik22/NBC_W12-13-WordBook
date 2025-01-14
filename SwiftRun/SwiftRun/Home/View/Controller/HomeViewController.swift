@@ -19,7 +19,6 @@ class HomeViewController: UIViewController {
         view.backgroundColor = .systemBackground
         print("HomeViewController loaded")
         setup()
-        bindCollectionView()
     }
 }
 
@@ -36,8 +35,9 @@ extension HomeViewController {
             homeView.topAnchor.constraint(equalTo: view.topAnchor),
             homeView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+        setBind()
     }
-
+    
     // 데이터 바인딩
     private func bindCollectionView() {
         // Cell 구성
@@ -63,48 +63,37 @@ extension HomeViewController {
             })
             .disposed(by: disposeBag)
     }
-
+    
+    private func bindSettingButton() {
+        homeView.settingsButton.rx.tap
+                .bind(to: viewModel.navigateToSettingScreen)
+                .disposed(by: disposeBag)
+        
+        homeView.settingsButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.navigateToSettingScreen()
+            })
+            .disposed(by: disposeBag)
+    }
+    
     // 화면 이동
     private func navigateToDetailScreen(with item: Category) {
-        let wordListViewController = WordListViewController() // WordListViewController로 변경
+        let wordListViewController = WordListViewController()
         self.navigationController?.pushViewController(wordListViewController, animated: true)
     }
+    private func navigateToSettingScreen() {
+        let settingViewController = SettingViewController()
+        self.navigationController?.pushViewController(settingViewController, animated: true)
+    }
+    
+    private func setBind() {
+        bindSettingButton()
+        bindCollectionView()
+    }
+    
 }
 
 @available(iOS 17.0, *)
 #Preview("HomeViewController") {
     HomeViewController()
-}
-
-// 화면 이동 테스트를 위한 임시 클래스
-class MockViewController: UIViewController {
-    private let item: String
-    
-    init(item: String) {
-        self.item = item
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .white
-        setupUI()
-    }
-    
-    private func setupUI() {
-        let label = UILabel()
-        label.text = "Selected Item: \(item)"
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(label)
-        
-        NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
-    }
 }

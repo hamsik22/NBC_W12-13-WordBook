@@ -13,6 +13,7 @@ class HomeViewVM {
 
     let categoriesRelay = BehaviorRelay<[Category]>(value: [])
     let itemSelected = PublishRelay<Category>()
+    let navigateToSettingScreen = PublishSubject<Void>()
 
     private let networkManager = NetworkManager.shared
     private let disposeBag = DisposeBag()
