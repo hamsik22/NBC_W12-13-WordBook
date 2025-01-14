@@ -3,10 +3,6 @@
 ## 프로젝트 소개
  Swift 학습을 위한 종합 용어 사전 앱입니다. Swift 프로그래밍과 iOS 개발에 필요한 용어들을 쉽게 찾아보고 학습 진도도 체크할 수 있습니다.
 
-# SwiftRun 
-## 프로젝트 소개
-Swift 학습을 위한 종합 용어 사전 앱입니다. Swift 프로그래밍과 iOS 개발에 필요한 용어들을 쉽게 찾아보고 학습 진도도 체크할 수 있습니다.
-
 ## 프로젝트 구조
 ```swift
 SwiftRun
@@ -48,4 +44,4 @@ SwiftRun
 - MVVM + RxSwift 
 
 ## API 문서
-SwiftRun은 자체 개발한 ~[iOS Vocabulary API](https://github.com/hamsik22/NBC_W12-13_WordBook/blob/main/docs/api-reference.md)~를 사용합니다. API에 대한 자세한 정보는 ~[API 문서](https://github.com/hamsik22/NBC_W12-13_WordBook/blob/main/docs/api-reference.md)~를 참조하세요.
+SwiftRun은 자체 개발한 [iOS Vocabulary API](https://github.com/hamsik22/NBC_W12-13_WordBook/blob/main/docs/api-reference.md)를 사용합니다. API에 대한 자세한 정보는 [API 문서](https://github.com/hamsik22/NBC_W12-13_WordBook/blob/main/docs/api-reference.md)를 참조하세요.
