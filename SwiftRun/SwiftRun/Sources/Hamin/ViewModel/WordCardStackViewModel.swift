@@ -13,19 +13,20 @@ final class WordCardStackViewModel {
     
     private let networkManager = NetworkManager.shared
     private let disposeBag = DisposeBag()
-
+    
     // MARK: - Properties
     private let categoryID: String = "1"
     
-    private var cardsShown: [Word] = []
     private var cardsToShow: [Word] = []
-    private var memorizedCards: [Int] = []
+    private var memorizedCards: Set<Int> = []
     
+    private var index = 0
     var cardsLeft: Int {
         return cardsToShow.count
     }
     
     private let wordPlaceholder = Word()
+    
     lazy var currentCard = BehaviorRelay(value: cardsToShow.popLast() ?? wordPlaceholder)
     lazy var didMemorizeCurrentCard = BehaviorRelay(value: Bool())
     
@@ -38,11 +39,31 @@ final class WordCardStackViewModel {
     
     // MARK: - Functions for binding
     
-    func nextCard() {
-        print("Next Card")
+    func start() {
+        guard let card = cardsToShow.popLast() else { return }
+        currentCard.accept(card)
+    }
     
-        memorizedCards.append(currentCard.value.id)
-        currentCard.accept(wordPlaceholder)
+    func nextCard() {
+        guard 0..<cardsLeft - 1 ~= index else { return }
+        index += 1
+        let nextCard = cardsToShow[index]
+
+        currentCard.accept(nextCard)
+        updateStatus(for: nextCard)
+        print(memorizedCards)
+        print(nextCard)
+    }
+    
+    func previousCard() {
+        guard 1..<cardsLeft ~= index else { return }
+        index -= 1
+        let previousCard = cardsToShow[index]
+        
+        currentCard.accept(previousCard)
+        updateStatus(for: previousCard)
+        print(memorizedCards)
+        print(previousCard)
     }
     
     func memorizedButtonTapped() {
@@ -51,6 +72,12 @@ final class WordCardStackViewModel {
         let currentBool: Bool = didMemorizeCurrentCard.value
         
         didMemorizeCurrentCard.accept(!currentBool)
+        
+        if didMemorizeCurrentCard.value && !memorizedCards.contains(currentCard.value.id) {
+            memorizedCards.insert(currentCard.value.id)
+        } else {
+            memorizedCards = memorizedCards.filter { $0 != currentCard.value.id }
+        }
     }
     
     // MARK: - Private functions
@@ -69,8 +96,11 @@ final class WordCardStackViewModel {
             .disposed(by: disposeBag)
     }
     
-
-
+    private func updateStatus(for word: Word) {
+        let status = memorizedCards.contains { $0 == word.id }
+        didMemorizeCurrentCard.accept(status)
+    }
+    
 }
 
 // MARK: - UserDefaults
@@ -79,10 +109,11 @@ extension WordCardStackViewModel {
         guard let memorizedCards = UserDefaults.standard.array(forKey: categoryID) as? [Int]
         else { return }
         
-        self.memorizedCards = memorizedCards
+        self.memorizedCards = Set(memorizedCards)
     }
     
     private func saveMemorizedCards() {
-        UserDefaults.standard.set(memorizedCards, forKey: categoryID)
+        let duplicatesRemoved = Array(memorizedCards)
+        UserDefaults.standard.set(duplicatesRemoved, forKey: categoryID)
     }
 }

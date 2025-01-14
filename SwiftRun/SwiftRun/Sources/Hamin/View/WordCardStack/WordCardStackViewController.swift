@@ -22,7 +22,7 @@ final class WordCardStackViewController: UIViewController {
         wordCardView.bind(to: viewModel)
         view.addSubview(wordCardView)
         setConstraints()
-        
+        viewModel.start()
         view.backgroundColor = .systemBackground
     }
     

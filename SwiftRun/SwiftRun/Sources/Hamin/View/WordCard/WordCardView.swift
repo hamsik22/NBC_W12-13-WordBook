@@ -119,7 +119,7 @@ final class WordCardView: UIView {
                 onNext: { [weak self] word in
                     self?.nameLabel.text = word.name
                     self?.subnameLabel.text = word.subName
-                    self?.detailsLabel.text = word.details.first
+                    self?.detailsLabel.text = word.definition
                 }
             ).disposed(by: disposeBag)
         
@@ -133,6 +133,10 @@ final class WordCardView: UIView {
         
         memorizedButton.rx.tap
             .subscribe(onNext: { viewModel.memorizedButtonTapped() })
+            .disposed(by: disposeBag)
+        
+        previousButton.rx.tap
+            .subscribe(onNext: { viewModel.previousCard() })
             .disposed(by: disposeBag)
         
         nextButton.rx.tap
