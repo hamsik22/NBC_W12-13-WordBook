@@ -1,11 +1,13 @@
 import UIKit
+import SnapKit
 
 class SidebarViewController: UIViewController {
 
-    // 클로저를 정의
+    // 카테고리가 선택되었을 때 실행될 클로저
     var onItemSelected: ((String) -> Void)?
 
-    private var categories: [Category] = []  // Category 객체 배열로 변경
+    // 카테고리 데이터 배열
+    private var categories: [Category] = []
     private let tableView = UITableView()
 
     override func viewDidLoad() {
@@ -14,9 +16,14 @@ class SidebarViewController: UIViewController {
         fetchCategories()
     }
 
+    // MARK: - UI 설정
     private func setupUI() {
         view.backgroundColor = .systemGray6
 
+        setupTableView()
+    }
+
+    private func setupTableView() {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
@@ -27,6 +34,7 @@ class SidebarViewController: UIViewController {
         }
     }
 
+    // MARK: - 카테고리 데이터 가져오기
     private func fetchCategories() {
         guard let url = URL(string: "https://iosvocabulary-default-rtdb.firebaseio.com/categories.json") else {
             print("잘못된 URL입니다.")
@@ -44,23 +52,29 @@ class SidebarViewController: UIViewController {
                 return
             }
 
-            do {
-                // JSON 데이터를 Dictionary 형태로 디코딩
-                let categoriesDict = try JSONDecoder().decode([String: Category].self, from: data)
-                let categories = categoriesDict.values.sorted { $0.name < $1.name }
-
-                DispatchQueue.main.async {
-                    self?.categories = categories
-                    self?.tableView.reloadData() // 테이블뷰 갱신
-                }
-            } catch {
-                print("디코딩 실패: \(error.localizedDescription)")
-            }
+            self?.decodeCategories(from: data)
         }
         task.resume()
     }
+
+    // MARK: - JSON 데이터 디코딩
+    private func decodeCategories(from data: Data) {
+        do {
+            // JSON 데이터를 Dictionary로 변환
+            let categoriesDict = try JSONDecoder().decode([String: Category].self, from: data)
+            let sortedCategories = categoriesDict.values.sorted { $0.name < $1.name }
+
+            DispatchQueue.main.async {
+                self.categories = sortedCategories
+                self.tableView.reloadData()
+            }
+        } catch {
+            print("디코딩 실패: \(error.localizedDescription)")
+        }
+    }
 }
 
+// MARK: - UITableViewDataSource & UITableViewDelegate
 extension SidebarViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return categories.count
@@ -75,8 +89,7 @@ extension SidebarViewController: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedCategory = categories[indexPath.row]
-        // 선택된 카테고리의 id를 클로저로 전달
-        onItemSelected?(selectedCategory.id)
+        onItemSelected?(selectedCategory.id) // 선택된 카테고리 ID를 전달
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
