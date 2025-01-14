@@ -18,7 +18,7 @@ class ProfileView: UIView {
         imageView.layer.cornerRadius = 50
         return imageView
     }()
-    private let nameLabel: UILabel = {
+    let nameLabel: UILabel = {
         let label = UILabel()
         label.text = "황석현"
         label.font = .systemFont(ofSize: 24, weight: .bold)
@@ -42,7 +42,7 @@ class ProfileView: UIView {
         label.textColor = .lightGray
         return label
     }()
-    private let editProfileButton: UIButton = {
+    let editProfileButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "square.and.pencil"), for: .normal)
         button.layer.borderColor = UIColor.systemBlue.cgColor

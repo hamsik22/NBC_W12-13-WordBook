@@ -43,6 +43,7 @@ extension HomeViewController {
         ])
         setBind()
         setProfile()
+        bindEditButton()
     }
     
     // 데이터 바인딩
@@ -78,6 +79,34 @@ extension HomeViewController {
         homeView.settingsButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 self?.navigateToSettingScreen()
+            })
+            .disposed(by: disposeBag)
+    }
+    private func bindEditButton() {
+        homeView.profile.editProfileButton.rx.tap
+            .subscribe(onNext: {
+                let alertController = UIAlertController(
+                        title: "이름 변경",
+                        message: "새 이름을 입력하세요",
+                        preferredStyle: .alert
+                    )
+                    
+                    alertController.addTextField { textField in
+                        textField.placeholder = "새 이름"
+                    }
+                    
+                    let saveAction = UIAlertAction(title: "저장", style: .default) { [weak self] _ in
+                        guard let self = self,
+                              let newName = alertController.textFields?.first?.text, !newName.isEmpty else { return }
+                        homeView.profile.nameLabel.text = newName
+                        UserDefaults.standard.set(newName, forKey: UserDefaultsKeys.userName.rawValue)
+                    }
+                    
+                    let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+                    
+                    alertController.addAction(saveAction)
+                    alertController.addAction(cancelAction)
+                self.present(alertController, animated: true)
             })
             .disposed(by: disposeBag)
     }
