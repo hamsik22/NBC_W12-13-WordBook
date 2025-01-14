@@ -108,7 +108,7 @@ final class WordCardStackViewModel {
     // MARK: - Other functions
     
     func fetchWords() {
-        guard let url = URL(string: "https://iosvocabulary-default-rtdb.firebaseio.com/items/category1.json") else { return }
+        guard let url = URL(string: "https://iosvocabulary-default-rtdb.firebaseio.com/items/category\(self.categoryID).json") else { return }
         
         networkManager.fetch(url: url)
             .subscribe(onSuccess: { [weak self] (response: [String: Word]) in
