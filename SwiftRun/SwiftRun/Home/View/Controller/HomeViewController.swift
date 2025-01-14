@@ -87,9 +87,19 @@ extension HomeViewController {
     
     // 화면 이동
     private func navigateToDetailScreen(with item: Category) {
-        let wordListViewController = WordListViewController()
+
+        // 선택된 카테고리 ID로 URL을 생성
+        let categoryId = item.id
+        let urlString = "https://iosvocabulary-default-rtdb.firebaseio.com/items/category\(categoryId).json"
+        print("Selected category URL: \(urlString)")  // URL 출력
+            
+        // WordListViewController로 화면 이동
+        let wordListViewModel = WordListViewModel(categoryId: categoryId, urlString: urlString) // ViewModel을 생성하고 URL을 전달
+        let wordListViewController = WordListViewController(viewModel: wordListViewModel) // ViewModel을 넘겨줌
         self.navigationController?.pushViewController(wordListViewController, animated: true)
     }
+    
+
     private func navigateToSettingScreen() {
         let settingViewController = SettingViewController()
         self.navigationController?.pushViewController(settingViewController, animated: true)

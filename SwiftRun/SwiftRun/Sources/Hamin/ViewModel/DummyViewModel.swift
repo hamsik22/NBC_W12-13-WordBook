@@ -62,7 +62,7 @@ final class DummyViewModel {
 
 final class DummyModel {
     
-    lazy var cardStack = [wordCard1, wordCard2, wordCard3]
+    lazy var cardStack: [WordCard] = []
     
     func nextCard() throws -> WordCard {
         let nextCard = cardStack.popLast()
@@ -76,29 +76,4 @@ final class DummyModel {
         case lastCardOnStack
     }
     
-    
-    let wordCard1: WordCard = WordCard(word: Word(id: 1,
-                                                 name: "KPI",
-                                                 subname: "Key Performance Indicator",
-                                                 definition: "핵심 성과 지표",
-                                                 details: "핵심 성과 지표로, 조직의 목표 달성을 측정하기 위한 구체적이고 측정 가능한 지표",
-                                                 tag: "마케팅 용어"
-                                                ),
-                                      didMemorize: false)
-    let wordCard2: WordCard = WordCard(word: Word(id: 2,
-                                                 name: "더미데이터",
-                                                 subname: "Dummy Data",
-                                                 definition: "그냥 더미데이터입니다",
-                                                 details: "임시로 넣어놓은 더미데이터",
-                                                 tag: "임시"
-                                                ),
-                                      didMemorize: false)
-    let wordCard3: WordCard = WordCard(word: Word(id: 3,
-                                                 name: "터미네이터",
-                                                 subname: "Terminator T-800",
-                                                 definition: "I'll be back",
-                                                 details: "That Terminator is out there! It can't be bargained with. It can't be reasoned with. It doesn't feel pity, or remorse, or fear. And it absolutely will not stop, ever! Until you are dead!",
-                                                 tag: "터미네이터"
-                                                ),
-                                      didMemorize: false)
 }
