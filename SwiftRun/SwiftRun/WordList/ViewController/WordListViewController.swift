@@ -38,6 +38,7 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
         startButton.backgroundColor = .systemBlue
         startButton.setTitleColor(.white, for: .normal)
         startButton.layer.cornerRadius = 8
+        startButton.addTarget(self, action: #selector(start), for: .touchUpInside)
         view.addSubview(startButton)
 
         searchBar.snp.makeConstraints { make in
@@ -60,6 +61,11 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
 
         // 사이드바 초기화
         setupSidebar()
+    }
+    
+    @objc private func start() {
+        let wordCardStackVC = WordCardStackViewController()
+        navigationController?.pushViewController(wordCardStackVC, animated: true)
     }
 
     private func bindViewModel() {
