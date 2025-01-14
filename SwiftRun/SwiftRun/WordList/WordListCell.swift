@@ -39,7 +39,7 @@ class VocabularyCell: UITableViewCell {
         definitionLabel.text = word.definition
 
         var configuration = UIButton.Configuration.filled()
-        configuration.title = isMemorized ? "Memorize" : "Not Memorize"
+        configuration.title = isMemorized ? "✅" : "❌"
         configuration.baseBackgroundColor = isMemorized ? .systemGreen : .systemGray
         configuration.cornerStyle = .capsule
 
@@ -73,7 +73,7 @@ class VocabularyCell: UITableViewCell {
 
     private func setupMemorizeTag() {
         var configuration = UIButton.Configuration.filled()
-        configuration.title = "Not Memorize"
+        configuration.title = "❌"
         configuration.baseBackgroundColor = .srBlue600Primary
         configuration.cornerStyle = .capsule
         

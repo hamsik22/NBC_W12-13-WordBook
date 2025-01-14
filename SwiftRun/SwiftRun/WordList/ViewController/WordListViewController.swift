@@ -33,7 +33,7 @@ class WordListViewController: UIViewController, UITableViewDataSource, UITableVi
     private func setupUI() {
         view.backgroundColor = .systemBackground
 
-        navigationItem.title = "Voca"
+        navigationItem.title = "목록"
         navigationItem.rightBarButtonItem = sidebarButton
 
         view.addSubview(searchBar)
