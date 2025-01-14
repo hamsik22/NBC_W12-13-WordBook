@@ -19,6 +19,7 @@ final class WordCardStackViewController: UIViewController {
     init(with viewModel: WordCardStackViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        viewModel.setDelegate(to: self)
     }
     
     required init?(coder: NSCoder) {
@@ -48,5 +49,11 @@ final class WordCardStackViewController: UIViewController {
         wordCardView.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
+    }
+}
+
+extension WordCardStackViewController: WordCardStackVMDelegate {
+    func popViewController() {
+        navigationController?.popViewController(animated: true)
     }
 }
