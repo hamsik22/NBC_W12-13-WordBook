@@ -125,7 +125,7 @@ extension ProfileView {
 extension ProfileView {
     func configure(name: String, count: Int) {
         self.nameLabel.text = name
-        self.progressPercentLabel.text = "\((count / 333) * 100) %"
+        self.progressPercentLabel.text = "\(Int((Double(count) / 333.0) * 100)) %"
         self.countLabel.text = "\(count) / 333"
         self.progressBar.progress = Float(Double(count) / 333)
     }
