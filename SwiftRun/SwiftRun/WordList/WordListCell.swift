@@ -29,21 +29,9 @@ class VocabularyCell: UITableViewCell {
         onMemorizeToggle?()
         // UIButtonConfiguration을 사용하여 애니메이션 적용
         UIView.animate(withDuration: 0.3) {
-            self.memorizeTag.backgroundColor =
-                self.memorizeTag.backgroundColor == .systemBlue ? .systemGray : .systemBlue
+            //self.memorizeTag.backgroundColor =
+                //self.memorizeTag.backgroundColor == .systemBlue ? .systemGray : .systemBlue
         }
-    }
-    
-    func configure(with word: Word, isMemorized: Bool) {
-        nameLabel.text = word.name
-        definitionLabel.text = word.definition
-
-        var configuration = UIButton.Configuration.filled()
-        configuration.title = isMemorized ? "✅" : "❌"
-        configuration.baseBackgroundColor = isMemorized ? .systemGreen : .systemGray
-        configuration.cornerStyle = .capsule
-
-        memorizeTag.configuration = configuration
     }
 
     private func setupContainerView() {
@@ -72,17 +60,25 @@ class VocabularyCell: UITableViewCell {
     }
 
     private func setupMemorizeTag() {
-        var configuration = UIButton.Configuration.filled()
-        configuration.title = "❌"
-        configuration.baseBackgroundColor = .srBlue600Primary
-        configuration.cornerStyle = .capsule
-        
-        memorizeTag.configuration = configuration
+        memorizeTag.setTitle("❌", for: .normal)
+        memorizeTag.setTitleColor(.srBlue600Primary, for: .normal)
+        memorizeTag.backgroundColor = .clear // 배경 제거
+        memorizeTag.layer.cornerRadius = 0   // 둥근 모서리 제거
+        memorizeTag.clipsToBounds = false    // 클립 제거
         memorizeTag.accessibilityLabel = "Memorization Toggle"
         memorizeTag.accessibilityHint = "Double tap to toggle memorization state"
         memorizeTag.accessibilityTraits = .button
         memorizeTag.addTarget(self, action: #selector(handleMemorizeToggle), for: .touchUpInside)
         containerView.addSubview(memorizeTag)
+    }
+
+    func configure(with word: Word, isMemorized: Bool) {
+        nameLabel.text = word.name
+        definitionLabel.text = word.definition
+        
+        memorizeTag.setTitle(isMemorized ? "✅" : "❌", for: .normal)
+        memorizeTag.setTitleColor(isMemorized ? .systemGreen : .systemGray, for: .normal)
+        memorizeTag.backgroundColor = .clear // 배경 제거
     }
 
     private func setupTagLabel() {
