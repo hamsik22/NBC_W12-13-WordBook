@@ -67,9 +67,11 @@ SwiftRun
 - 직관적인 인터페이스
 - 검색 기능
 
-## 스크린샷
+## 시연 영상
 
-[스크린샷들 추가 예정]
+
+https://github.com/user-attachments/assets/b25fe072-2ab5-4f96-b926-d037e82da9c4
+
 
 ## 기술 스택
 ### 프레임워크 & 라이브러리
