@@ -174,7 +174,7 @@ final class WordCardView: UIView {
     }
     
     private func updateBackground(_ didMemorize: Bool) {
-        backgroundColor = didMemorize ? .srBlue200 : .sr200Gray
+         backgroundColor = didMemorize ? .srBlue200 : .sr200Gray
         layer.borderColor = didMemorize ? UIColor.srBlue700.cgColor : UIColor.sr700Gray.cgColor
         layer.borderWidth = 3.0
     }
