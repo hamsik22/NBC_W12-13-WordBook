@@ -6,8 +6,48 @@
 ## 프로젝트 구조
 ```swift
 SwiftRun
-├── Sources
-프로젝트 종료 후 작성
+├── Application
+│   ├── AppDelegate.swift               # 앱 생명주기 및 초기 설정 관리
+│   └── SceneDelegate.swift             # 앱 화면(Scene) 생명주기 관리
+│
+├── Network
+│   └── NetworkManager.swift            # Firebase API 통신 관리, 싱글톤 패턴 사용
+│
+├── Resources
+│   ├── Assets.xcassets                 # 앱 이미지, 컬러셋 등 리소스 관리
+│   └── Info.plist                      # 앱 설정 및 권한 정보
+│
+└── Sources
+   ├── Models
+   │   ├── HomeModel.swift             # Category 구조체 정의
+   │   ├── Utility.swift               # URL, CategoryKeys, UserDefaultsKeys 등 상수 관리
+   │   └── Word.swift                  # Word, WordCard 구조체 정의 및 Codable 구현
+   │
+   ├── ViewModels
+   │   ├── HomeViewVM.swift            # 홈 화면 카테고리 데이터 및 네비게이션 관리
+   │   ├── SettingViewVM.swift         # 다크모드 설정 상태 관리
+   │   └── WordCardStackViewModel.swift # 단어 카드 상태 및 암기 데이터 관리
+   │
+   └── Views
+       ├── Home
+       │   ├── Controller
+       │   │   ├── HomeViewController.swift    # 홈 화면 메인 컨트롤러
+       │   │   └── SettingViewController.swift # 설정 화면 컨트롤러
+       │   ├── HomeView.swift                  # 홈 화면 메인 뷰 (프로필, 단어장 목록 포함)
+       │   ├── ProfileView.swift               # 사용자 프로필 및 학습 진도 표시
+       │   ├── SettingView.swift               # 테마 설정, 개인정보, 도움말 UI
+       │   └── WordBookCollectionCell.swift    # 단어장 컬렉션 뷰 셀
+       │
+       ├── WordCard
+       │   ├── MemorizedButton.swift           # 단어 암기 상태 토글 버튼
+       │   ├── WordCardStackViewController.swift # 단어 카드 화면 컨트롤러
+       │   └── WordCardView.swift               # 단어 카드 UI (단어, 의미, 암기 상태 표시)
+       │
+       └── WordList
+           ├── ViewControllers
+           │   ├── SidebarViewController.swift  # 카테고리 사이드바 컨트롤러
+           │   └── WordListViewController.swift # 단어 목록 화면 컨트롤러
+           └── WordListCell.swift               # 단어 목록 셀 (단어, 의미, 암기 상태 표시)
 ```
 
 ## 주요 기능
@@ -27,9 +67,11 @@ SwiftRun
 - 직관적인 인터페이스
 - 검색 기능
 
-## 스크린샷
+## 시연 영상
 
-[스크린샷들 추가 예정]
+
+https://github.com/user-attachments/assets/b25fe072-2ab5-4f96-b926-d037e82da9c4
+
 
 ## 기술 스택
 ### 프레임워크 & 라이브러리
