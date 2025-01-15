@@ -39,7 +39,7 @@
 		C36520472D2D2FF100D63A55 /* Exceptions for "SwiftRun" folder in "SwiftRun" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Resources/Info.plist,
 			);
 			target = C365201E2D2D2FEF00D63A55 /* SwiftRun */;
 		};
@@ -316,7 +316,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6XVTBTTTFN;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SwiftRun/Info.plist;
+				INFOPLIST_FILE = SwiftRun/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -344,7 +344,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6XVTBTTTFN;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = SwiftRun/Info.plist;
+				INFOPLIST_FILE = SwiftRun/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
