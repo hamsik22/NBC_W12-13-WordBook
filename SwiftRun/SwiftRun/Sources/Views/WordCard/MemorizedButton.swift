@@ -35,7 +35,7 @@ final class MemorizedButton: UIButton {
     // 이 함수를 View와 ViewModel를 Bind할 때 사용해서 버튼의 색과 글자, 그리고 너비를 바꿔주면 됩니다.
     func updateButton(_ didMemorize: Bool) {
         backgroundColor = didMemorize ? .srBlue400 : .sr400Gray
-        setTitle(didMemorize ? "✅" : "❌", for: .normal)
+        setTitle(didMemorize ? "외웠어요" : "못외웠어요", for: .normal)
         
         buttonWidthConstraint?.update(offset: didMemorize ? 76 : 88)
         UIView.animate(withDuration: 0.1) {
